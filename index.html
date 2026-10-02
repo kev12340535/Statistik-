@@ -4,29 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LagerManager Analytics</title>
 
 <style>
 :root{
   --bg:#000;
   --card:#111;
-  --card2:#181818;
-  --line:#292929;
+  --card2:#1c1c1e;
+  --line:#2a2a2c;
   --text:#f5f5f7;
   --muted:#8e8e93;
   --green:#30d158;
   --red:#ff453a;
-  --blue:#0a84ff;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-html,body{
+html,
+body{
   margin:0;
   padding:0;
-  background:var(--bg);
+  background:#000;
   color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    Helvetica,
+    Arial,
+    sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 
@@ -35,37 +47,36 @@ body{
   padding-bottom:env(safe-area-inset-bottom);
 }
 
-button,input,select{
+button,
+input,
+select,
+textarea{
   font:inherit;
 }
 
 button{
   border:0;
-  color:var(--text);
-  background:#1c1c1e;
-  border-radius:12px;
-  padding:10px 14px;
   cursor:pointer;
 }
 
-button:active{
-  opacity:.65;
-  transform:scale(.98);
+.app{
+  width:100%;
+  max-width:1100px;
+  min-height:100vh;
+  margin:0 auto;
 }
 
-.app{
-  max-width:1100px;
-  margin:auto;
-  min-height:100vh;
-}
+/* =========================
+   HEADER
+========================= */
 
 .header{
   position:sticky;
   top:0;
-  z-index:20;
-  background:rgba(0,0,0,.94);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  z-index:50;
+  background:rgba(0,0,0,.95);
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
   border-bottom:1px solid var(--line);
   padding:12px 14px 10px;
 }
@@ -79,6 +90,7 @@ button:active{
 
 .title{
   font-size:22px;
+  line-height:25px;
   font-weight:700;
   letter-spacing:-.5px;
 }
@@ -91,82 +103,91 @@ button:active{
 
 .headerButtons{
   display:flex;
-  gap:6px;
+  gap:7px;
 }
 
-.iconBtn{
+.iconButton{
   width:40px;
   height:40px;
-  padding:0;
+  border-radius:12px;
+  background:#1c1c1e;
+  color:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:18px;
+  font-size:19px;
 }
 
-.searchBox{
-  margin-top:10px;
+.search{
   position:relative;
+  margin-top:10px;
 }
 
-.searchBox input{
+.search input{
   width:100%;
   height:44px;
-  border:1px solid var(--line);
   border-radius:14px;
+  border:1px solid #292929;
   background:#1c1c1e;
-  color:white;
-  padding:0 42px 0 40px;
+  color:#fff;
   outline:none;
+  padding:0 42px 0 40px;
   font-size:16px;
 }
 
-.searchBox input:focus{
-  border-color:#444;
+.search input::placeholder{
+  color:#8e8e93;
 }
 
 .searchIcon{
   position:absolute;
   left:14px;
-  top:11px;
-  color:var(--muted);
-  font-size:19px;
+  top:10px;
+  font-size:20px;
+  color:#8e8e93;
 }
 
 .clearSearch{
   position:absolute;
-  right:9px;
+  right:8px;
   top:7px;
   width:30px;
   height:30px;
-  padding:0;
   border-radius:50%;
   background:#3a3a3c;
   color:#aaa;
   display:none;
+  padding:0;
 }
 
 .tabs{
   display:flex;
-  background:#1c1c1e;
-  border-radius:12px;
-  padding:2px;
+  gap:2px;
   margin-top:10px;
+  padding:2px;
+  border-radius:12px;
+  background:#1c1c1e;
 }
 
 .tab{
   flex:1;
+  min-width:0;
+  padding:8px 4px;
+  border-radius:10px;
   background:transparent;
-  padding:8px;
-  font-size:13px;
-  color:var(--muted);
+  color:#8e8e93;
+  font-size:12px;
 }
 
 .tab.active{
   background:#3a3a3c;
-  color:white;
+  color:#fff;
   font-weight:600;
 }
+
+/* =========================
+   CONTENT
+========================= */
 
 .content{
   padding:12px;
@@ -174,48 +195,55 @@ button:active{
 
 .stats{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:8px;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 .stat{
-  background:var(--card);
+  min-height:74px;
+  padding:11px;
   border:1px solid var(--line);
   border-radius:14px;
-  padding:12px;
-  min-height:72px;
+  background:#111;
 }
 
 .statLabel{
-  font-size:11px;
   color:var(--muted);
+  font-size:11px;
   margin-bottom:5px;
 }
 
 .statValue{
-  font-size:20px;
+  font-size:19px;
   font-weight:700;
-  letter-spacing:-.4px;
+  letter-spacing:-.3px;
 }
 
-.green{color:var(--green)}
-.red{color:var(--red)}
+.green{
+  color:var(--green)!important;
+}
+
+.red{
+  color:var(--red)!important;
+}
 
 .section{
-  margin-bottom:14px;
+  margin-bottom:15px;
 }
 
 .sectionHeader{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:10px;
   margin-bottom:7px;
 }
 
 .sectionTitle{
   font-size:17px;
   font-weight:700;
+  letter-spacing:-.2px;
 }
 
 .sectionInfo{
@@ -224,7 +252,7 @@ button:active{
 }
 
 .card{
-  background:var(--card);
+  background:#111;
   border:1px solid var(--line);
   border-radius:14px;
   overflow:hidden;
@@ -241,20 +269,22 @@ button:active{
 
 .rowTop{
   display:flex;
+  align-items:flex-start;
   justify-content:space-between;
-  gap:10px;
+  gap:12px;
 }
 
 .rowTitle{
   font-size:14px;
   font-weight:600;
+  line-height:18px;
 }
 
 .rowSub{
-  margin-top:3px;
+  margin-top:4px;
   color:var(--muted);
   font-size:12px;
-  line-height:1.4;
+  line-height:17px;
 }
 
 .rowValue{
@@ -264,14 +294,37 @@ button:active{
   font-weight:600;
 }
 
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+
+.smallButton{
+  padding:7px 10px;
+  border-radius:9px;
+  background:#29292b;
+  color:#fff;
+  font-size:12px;
+}
+
+.smallButton.greenButton{
+  color:var(--green);
+}
+
+.smallButton.redButton{
+  color:var(--red);
+}
+
 .badge{
   display:inline-block;
   padding:3px 7px;
   border-radius:7px;
-  background:#292929;
+  background:#29292b;
   color:#ddd;
   font-size:10px;
-  margin-right:4px;
+  margin-right:3px;
 }
 
 .badge.greenBadge{
@@ -282,64 +335,26 @@ button:active{
   color:var(--red);
 }
 
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:8px;
-}
-
-.smallBtn{
-  padding:7px 10px;
-  border-radius:9px;
-  font-size:12px;
-}
-
 .empty{
-  padding:28px 15px;
+  padding:30px 15px;
   text-align:center;
   color:var(--muted);
   font-size:13px;
+  line-height:20px;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:12px;
-}
-
-th{
-  text-align:left;
-  color:var(--muted);
-  font-weight:500;
-  padding:9px 8px;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
-}
-
-td{
-  padding:9px 8px;
-  border-bottom:1px solid var(--line);
-  vertical-align:top;
-}
-
-tr:last-child td{
-  border-bottom:0;
-}
-
-.scroll{
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-}
+/* =========================
+   MODAL
+========================= */
 
 .modalBack{
   position:fixed;
   inset:0;
   z-index:100;
-  background:rgba(0,0,0,.72);
   display:none;
   align-items:flex-end;
   justify-content:center;
+  background:rgba(0,0,0,.75);
 }
 
 .modalBack.show{
@@ -348,22 +363,21 @@ tr:last-child td{
 
 .modal{
   width:100%;
-  max-width:650px;
-  max-height:92vh;
+  max-width:680px;
+  max-height:94vh;
   overflow:auto;
   background:#1c1c1e;
   border-radius:20px 20px 0 0;
-  padding:15px;
+  padding:14px;
   padding-bottom:calc(18px + env(safe-area-inset-bottom));
-  box-shadow:0 -10px 50px rgba(0,0,0,.5);
 }
 
 .modalHandle{
   width:38px;
   height:5px;
+  margin:0 auto 14px;
   border-radius:4px;
   background:#555;
-  margin:0 auto 15px;
 }
 
 .modalTitle{
@@ -372,43 +386,26 @@ tr:last-child td{
   margin-bottom:12px;
 }
 
-.field{
-  margin-bottom:11px;
-}
-
-.field label{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  margin:0 0 5px 3px;
-}
-
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  border:1px solid #333;
-  border-radius:11px;
-  background:#2c2c2e;
-  color:white;
-  padding:10px 11px;
-  outline:none;
-  font-size:15px;
-}
-
-.field textarea{
-  min-height:90px;
-  resize:vertical;
+.infoBox{
+  padding:11px;
+  border-radius:12px;
+  background:#29292b;
+  color:#d8d8da;
+  font-size:12px;
+  line-height:19px;
+  margin-bottom:10px;
 }
 
 .modalActions{
   display:flex;
-  gap:8px;
-  margin-top:14px;
+  gap:7px;
+  margin-top:12px;
 }
 
 .modalActions button{
   flex:1;
+  min-height:42px;
+  border-radius:12px;
 }
 
 .primary{
@@ -417,46 +414,134 @@ tr:last-child td{
   font-weight:700;
 }
 
+.secondary{
+  background:#3a3a3c;
+  color:#fff;
+}
+
 .danger{
   background:var(--red);
   color:#fff;
-  font-weight:600;
-}
-
-.secondary{
-  background:#3a3a3c;
 }
 
 .fileInput{
   display:none;
 }
 
-.infoBox{
-  padding:11px;
-  border-radius:11px;
-  background:#252527;
-  color:#ccc;
-  font-size:12px;
-  line-height:1.5;
-  margin-bottom:12px;
+/* =========================
+   BELEG VIEWER
+========================= */
+
+.viewerBack{
+  position:fixed;
+  inset:0;
+  z-index:300;
+  display:none;
+  flex-direction:column;
+  background:#000;
 }
 
-.searchResultCount{
-  color:var(--muted);
-  font-size:11px;
-  margin:7px 2px 10px;
+.viewerBack.show{
+  display:flex;
 }
+
+.viewerHeader{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:
+    10px
+    12px
+    10px
+    12px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  background:rgba(0,0,0,.96);
+  border-bottom:1px solid #222;
+}
+
+.viewerTitle{
+  flex:1;
+  min-width:0;
+  font-size:16px;
+  font-weight:600;
+  text-align:center;
+}
+
+.viewerButton{
+  min-width:42px;
+  height:40px;
+  padding:0 11px;
+  border-radius:11px;
+  background:#1c1c1e;
+  color:#fff;
+  font-size:13px;
+}
+
+.viewerButton.green{
+  color:var(--green);
+}
+
+.viewerContent{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+}
+
+.viewerContent img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:5px;
+}
+
+.viewerContent iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+
+.viewerContent a{
+  color:var(--green);
+}
+
+/* =========================
+   DESKTOP
+========================= */
 
 @media(min-width:700px){
+
   .stats{
     grid-template-columns:repeat(4,1fr);
   }
+
+  .modalBack{
+    align-items:center;
+  }
+
+  .modal{
+    border-radius:20px;
+    max-height:88vh;
+  }
 }
 
-@media(prefers-reduced-motion:no-preference){
-  button,input{
-    transition:.15s ease;
-  }
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+button:active{
+  transform:scale(.98);
+  opacity:.7;
+}
+
+input:focus{
+  border-color:#555!important;
 }
 </style>
 </head>
@@ -466,78 +551,212 @@ tr:last-child td{
 <div class="app">
 
 <header class="header">
+
   <div class="headerTop">
+
     <div>
       <div class="title">Analytics</div>
       <div class="subtitle">LagerManager Auswertung</div>
     </div>
 
     <div class="headerButtons">
-      <button class="iconBtn" onclick="openImport()" title="Import">↥</button>
-      <button class="iconBtn" onclick="exportData()" title="Export">↧</button>
+      <button
+        class="iconButton"
+        onclick="openImport()"
+        aria-label="Import">
+        ↥
+      </button>
+
+      <button
+        class="iconButton"
+        onclick="exportData()"
+        aria-label="Export">
+        ↧
+      </button>
     </div>
+
   </div>
 
-  <div class="searchBox">
+  <div class="search">
+
     <span class="searchIcon">⌕</span>
-    <input id="globalSearch"
-           type="search"
-           placeholder="Alles durchsuchen …"
-           autocomplete="off"
-           oninput="runSearch()">
-    <button id="clearSearch"
-            class="clearSearch"
-            onclick="clearSearch()">×</button>
+
+    <input
+      id="globalSearch"
+      type="search"
+      placeholder="Alles durchsuchen …"
+      autocomplete="off"
+      oninput="runSearch()">
+
+    <button
+      id="clearSearch"
+      class="clearSearch"
+      onclick="clearSearch()">
+      ×
+    </button>
+
   </div>
 
   <div class="tabs">
-    <button id="tabOverview" class="tab active" onclick="setTab('overview')">Übersicht</button>
-    <button id="tabSales" class="tab" onclick="setTab('sales')">Verkäufe</button>
-    <button id="tabPurchases" class="tab" onclick="setTab('purchases')">Einkäufe</button>
-    <button id="tabSearch" class="tab" onclick="setTab('search')">Suche</button>
+
+    <button
+      id="tabOverview"
+      class="tab active"
+      onclick="setTab('overview')">
+      Übersicht
+    </button>
+
+    <button
+      id="tabSales"
+      class="tab"
+      onclick="setTab('sales')">
+      Verkäufe
+    </button>
+
+    <button
+      id="tabPurchases"
+      class="tab"
+      onclick="setTab('purchases')">
+      Einkäufe
+    </button>
+
+    <button
+      id="tabSearch"
+      class="tab"
+      onclick="setTab('search')">
+      Suche
+    </button>
+
   </div>
+
 </header>
 
-<main class="content" id="content"></main>
+<main
+  id="content"
+  class="content">
+</main>
 
 </div>
 
-<!-- IMPORT -->
-<div class="modalBack" id="importModal">
+
+<!-- IMPORT MODAL -->
+
+<div
+  id="importModal"
+  class="modalBack">
+
   <div class="modal">
+
     <div class="modalHandle"></div>
-    <div class="modalTitle">LagerManager-Daten importieren</div>
+
+    <div class="modalTitle">
+      LagerManager-Daten importieren
+    </div>
 
     <div class="infoBox">
-      Wähle die JSON-Sicherungsdatei aus deiner LagerManager-App aus.
-      Die Daten werden nur in dieser Analytics-App verarbeitet.
+      Wähle hier die JSON-Sicherung aus deiner
+      LagerManager-App aus.
+      <br><br>
+      Die Analytics-App verarbeitet die Daten lokal
+      auf deinem Gerät.
     </div>
 
-    <input id="jsonFile" class="fileInput" type="file" accept=".json,application/json">
+    <input
+      id="jsonFile"
+      class="fileInput"
+      type="file"
+      accept=".json,application/json">
 
     <div class="modalActions">
-      <button class="secondary" onclick="closeImport()">Abbrechen</button>
-      <button class="primary" onclick="document.getElementById('jsonFile').click()">Datei wählen</button>
+
+      <button
+        class="secondary"
+        onclick="closeImport()">
+        Abbrechen
+      </button>
+
+      <button
+        class="primary"
+        onclick="document.getElementById('jsonFile').click()">
+        Datei auswählen
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
-<!-- DETAIL -->
-<div class="modalBack" id="detailModal">
+
+<!-- DETAIL MODAL -->
+
+<div
+  id="detailModal"
+  class="modalBack">
+
   <div class="modal">
+
     <div class="modalHandle"></div>
+
     <div id="detailContent"></div>
+
     <div class="modalActions">
-      <button class="secondary" onclick="closeDetail()">Schließen</button>
+
+      <button
+        class="secondary"
+        onclick="closeDetail()">
+        ← Zurück
+      </button>
+
     </div>
+
   </div>
+
 </div>
+
+
+<!-- BELEG VIEWER -->
+
+<div
+  id="viewer"
+  class="viewerBack">
+
+  <div class="viewerHeader">
+
+    <button
+      class="viewerButton"
+      onclick="closeViewer()">
+      ← Zurück
+    </button>
+
+    <div
+      id="viewerTitle"
+      class="viewerTitle">
+      Rechnung / Beleg
+    </div>
+
+    <button
+      id="viewerDownload"
+      class="viewerButton green"
+      onclick="downloadCurrentDocument()">
+      ↓
+    </button>
+
+  </div>
+
+  <div
+    id="viewerContent"
+    class="viewerContent">
+  </div>
+
+</div>
+
 
 <script>
 "use strict";
 
 /* =========================================================
-   DATEN
+   GRUNDDATEN
 ========================================================= */
 
 let data = {
@@ -546,253 +765,571 @@ let data = {
 };
 
 let currentTab = "overview";
-let searchResults = [];
 
-const STORAGE_KEY = "LagerManagerAnalyticsV2";
+let searchResults = {
+  sales:[],
+  articles:[]
+};
+
+let currentDocument = null;
+
+const STORAGE_KEY =
+  "LagerManagerAnalyticsV3";
+
 
 /* =========================================================
    START
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
+
   loadLocalData();
 
-  document.getElementById("jsonFile").addEventListener("change", importJSON);
+  document
+    .getElementById("jsonFile")
+    .addEventListener(
+      "change",
+      importJSON
+    );
 
   render();
+
 });
 
+
 /* =========================================================
-   NORMALISIERUNG
+   HILFSFUNKTIONEN
 ========================================================= */
 
-function clean(v){
-  if(v === null || v === undefined) return "";
-  return String(v).trim();
+function clean(value){
+
+  if(value === null ||
+     value === undefined){
+
+    return "";
+  }
+
+  return String(value).trim();
 }
 
-function lower(v){
-  return clean(v).toLocaleLowerCase("de-DE");
+
+function lower(value){
+
+  return clean(value)
+    .toLocaleLowerCase("de-DE");
 }
 
-function normalizePlatform(v){
-  const x = lower(v);
 
-  if(x === "ebay") return "eBay";
-  if(x === "vinted") return "Vinted";
-  if(x === "kleinanzeigen") return "Kleinanzeigen";
-  if(x === "amazon") return "Amazon";
-  if(x === "etsy") return "Etsy";
-  if(x === "shopify") return "Shopify";
-  if(x === "paypal") return "PayPal";
-  if(x === "flohmarkt") return "Flohmarkt";
+function normalizeKey(value){
 
-  return clean(v) || "Sonstiges";
+  return lower(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/ß/g,"ss")
+    .replace(/[^a-z0-9]/g,"");
 }
 
-function normalizeSource(v){
-  const x = lower(v);
 
-  const map = {
-    "müller":"Müller",
-    "mueller":"Müller",
-    "sportspar":"Sportspar",
-    "picksport":"Picksport",
-    "amazon":"Amazon",
-    "ebay":"eBay",
-    "kleinanzeigen":"Kleinanzeigen",
-    "vinted":"Vinted"
+/* =========================================================
+   PLATTFORMEN
+========================================================= */
+
+function normalizePlatform(value){
+
+  const key =
+    normalizeKey(value);
+
+  const aliases = {
+
+    ebay:"eBay",
+
+    vinted:"Vinted",
+    vintef:"Vinted",
+    vintet:"Vinted",
+
+    kleinanzeigen:"Kleinanzeigen",
+
+    amazon:"Amazon",
+
+    shopify:"Shopify",
+
+    flohmarkt:"Flohmarkt",
+
+    etsy:"Etsy",
+
+    paypal:"PayPal",
+
+    sonstiges:"Sonstiges"
+
   };
 
-  return map[x] || clean(v) || "Unbekannt";
+  return aliases[key] ||
+    clean(value) ||
+    "Sonstiges";
 }
 
-function normalizeSize(v){
-  return clean(v).toLocaleUpperCase("de-DE");
-}
 
 /* =========================================================
-   ARTIKELNAME
-   Erstes Wort ist immer der Artikelname
+   EINKAUFSORTE / GESCHÄFTE
 ========================================================= */
 
-function getArticleName(name){
-  const value = clean(name);
+function normalizeSource(value){
 
-  if(!value) return "Unbekannt";
+  const key =
+    normalizeKey(value);
 
-  return value.split(/\s+/)[0];
-}
-
-/* =========================================================
-   ZAHLEN / DATEN
-========================================================= */
-
-function number(v){
-  if(typeof v === "number") return isFinite(v) ? v : 0;
-
-  let s = clean(v)
-    .replace(/[€$]/g,"")
-    .replace(/\s/g,"");
-
-  if(!s) return 0;
-
-  if(s.includes(",") && s.includes(".")){
-    if(s.lastIndexOf(",") > s.lastIndexOf(".")){
-      s = s.replace(/\./g,"").replace(",",".");
-    }else{
-      s = s.replace(/,/g,"");
-    }
-  }else{
-    s = s.replace(",",".");
+  if(!key){
+    return "Unbekannt";
   }
 
-  const n = parseFloat(s);
-  return isFinite(n) ? n : 0;
+  /*
+    Alles, was zu Haus der Geschenke
+    in Ilmenau gehört, wird zusammengeführt.
+  */
+
+  if(
+    key.includes("hausdergeschenke") ||
+    key.includes("hausgeschenke")
+  ){
+    return "Haus der Geschenke - Ilmenau";
+  }
+
+  const aliases = {
+
+    mueller:"Müller",
+    muellerdrogerie:"Müller",
+
+    sportspar:"Sportspar",
+
+    picksport:"Picksport",
+
+    amazon:"Amazon",
+
+    ebay:"eBay",
+
+    vinted:"Vinted",
+
+    kleinanzeigen:"Kleinanzeigen"
+
+  };
+
+  return aliases[key] ||
+    clean(value) ||
+    "Unbekannt";
 }
 
-function formatEuro(v){
-  return number(v).toLocaleString("de-DE",{
-    style:"currency",
-    currency:"EUR"
-  });
+
+/* =========================================================
+   MARKEN / ARTIKELGRUPPEN
+========================================================= */
+
+/*
+  Die Schreibweise wird nicht berücksichtigt.
+  McKinley, MCKINLEY, McKINLEY usw.
+  werden dadurch als dasselbe erkannt.
+*/
+
+const BRAND_NAMES = {
+
+  adidas:"Adidas",
+  nike:"Nike",
+  puma:"Puma",
+  reebok:"Reebok",
+  mckinley:"McKinley",
+  fjallraven:"Fjällräven",
+  jackwolfskin:"Jack Wolfskin",
+  thenorthface:"The North Face",
+  columbia:"Columbia",
+  salomon:"Salomon",
+  mammut:"Mammut",
+  vaude:"Vaude",
+  patagonia:"Patagonia",
+  underarmour:"Under Armour",
+  asics:"ASICS",
+  newbalance:"New Balance",
+  converse:"Converse",
+  vans:"Vans",
+  levis:"Levi's",
+  tommyhilfiger:"Tommy Hilfiger",
+  calvinklein:"Calvin Klein",
+  bosshugo:"Hugo Boss",
+  hugoboss:"Hugo Boss",
+  boss:"Boss",
+  lacoste:"Lacoste",
+  esprit:"Esprit",
+  soliver:"s.Oliver",
+  engelbertstrauss:"Engelbert Strauss",
+  pokemon:"Pokémon",
+  nintendo:"Nintendo",
+  lego:"LEGO",
+  timberland:"Timberland",
+  jackjones:"Jack & Jones",
+  only:"Only"
+
+};
+
+
+function getArticleGroup(name){
+
+  const original =
+    clean(name);
+
+  if(!original){
+    return "Unbekannt";
+  }
+
+  /*
+    Laut deiner Vorgabe:
+    Das erste Wort ist der Artikelname.
+  */
+
+  const firstWord =
+    original.split(/\s+/)[0];
+
+  const key =
+    normalizeKey(firstWord);
+
+  if(BRAND_NAMES[key]){
+    return BRAND_NAMES[key];
+  }
+
+  /*
+    Falls der erste Begriff kein bekannter Markenname ist,
+    bleibt er trotzdem die Artikelgruppe.
+  */
+
+  return firstWord;
 }
 
-function formatDate(v){
-  const s = clean(v);
-  if(!s) return "—";
 
-  const d = new Date(s);
+/* =========================================================
+   ZAHLEN
+========================================================= */
+
+function number(value){
+
+  if(typeof value === "number"){
+    return isFinite(value)
+      ? value
+      : 0;
+  }
+
+  let text =
+    clean(value)
+      .replace(/[€$]/g,"")
+      .replace(/\s/g,"");
+
+  if(!text){
+    return 0;
+  }
+
+  if(
+    text.includes(",") &&
+    text.includes(".")
+  ){
+
+    if(
+      text.lastIndexOf(",") >
+      text.lastIndexOf(".")
+    ){
+
+      text =
+        text
+          .replace(/\./g,"")
+          .replace(",",".");
+    }
+    else{
+
+      text =
+        text.replace(/,/g,"");
+    }
+
+  }
+  else{
+
+    text =
+      text.replace(",",".");
+  }
+
+  const n =
+    parseFloat(text);
+
+  return isFinite(n)
+    ? n
+    : 0;
+}
+
+
+function formatEuro(value){
+
+  return number(value)
+    .toLocaleString(
+      "de-DE",
+      {
+        style:"currency",
+        currency:"EUR"
+      }
+    );
+}
+
+
+/* =========================================================
+   DATEN
+========================================================= */
+
+function dateValue(value){
+
+  if(!value){
+    return 0;
+  }
+
+  const d =
+    new Date(value);
 
   if(!isNaN(d)){
-    return d.toLocaleDateString("de-DE");
+    return d.getTime();
   }
 
-  if(/^\d{2}-\d{2}-\d{4}$/.test(s)) return s;
-
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){
-    const [y,m,day] = s.split("-");
-    return `${day}.${m}.${y}`;
-  }
-
-  return s;
-}
-
-function dateValue(v){
-  if(!v) return 0;
-
-  const d = new Date(v);
-
-  if(!isNaN(d)) return d.getTime();
-
-  const m = clean(v).match(/^(\d{2})[-./](\d{2})[-./](\d{4})$/);
+  const m =
+    clean(value).match(
+      /^(\d{2})[-./](\d{2})[-./](\d{4})$/
+    );
 
   if(m){
+
     return new Date(
       Number(m[3]),
       Number(m[2])-1,
       Number(m[1])
     ).getTime();
+
   }
 
   return 0;
 }
+
+
+function formatDate(value){
+
+  const text =
+    clean(value);
+
+  if(!text){
+    return "—";
+  }
+
+  const d =
+    new Date(text);
+
+  if(!isNaN(d)){
+
+    return d.toLocaleDateString(
+      "de-DE"
+    );
+
+  }
+
+  if(
+    /^\d{2}-\d{2}-\d{4}$/.test(text)
+  ){
+    return text;
+  }
+
+  if(
+    /^\d{4}-\d{2}-\d{2}$/.test(text)
+  ){
+
+    const parts =
+      text.split("-");
+
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  }
+
+  return text;
+}
+
 
 /* =========================================================
    STORNO
 ========================================================= */
 
 function isStorno(s){
-  return s && (
-    s.isStorno === true ||
-    lower(s.isStorno) === "true" ||
-    lower(s.status) === "storno"
+
+  return !!(
+    s &&
+    (
+      s.isStorno === true ||
+      lower(s.isStorno) === "true" ||
+      lower(s.status) === "storno"
+    )
   );
+
 }
 
+
 /* =========================================================
-   VERKAUFSDATEN
+   VERKAUF
 ========================================================= */
 
 function saleRevenue(s){
+
   return number(s.total);
 }
 
+
 function saleShipping(s){
+
   return number(s.shipping);
 }
 
+
 function saleFees(s){
+
   return number(s.fees);
 }
 
+
 function saleCost(s){
-  return number(s.buyPrice) * Math.max(1,number(s.qty));
-}
 
-function saleProfit(s){
-  if(isStorno(s)) return 0;
-
-  return saleRevenue(s)
-    - saleShipping(s)
-    - saleFees(s)
-    - saleCost(s);
-}
-
-/* =========================================================
-   KÄUFER / ADRESSE
-========================================================= */
-
-function addressParts(s){
-  const a = s.address;
-
-  if(typeof a === "object" && a !== null){
-    return {
-      name:clean(a.name || a.vorname || a.fullName),
-      street:clean(a.street || a.strasse || a.address),
-      zip:clean(a.zip || a.plz || a.postcode),
-      city:clean(a.city || a.stadt || a.ort),
-      country:clean(a.country || a.land)
-    };
-  }
-
-  const text = clean(a);
-
-  return {
-    name:clean(s.name),
-    street:text,
-    zip:"",
-    city:"",
-    country:""
-  };
-}
-
-function buyerName(s){
-  const a = addressParts(s);
-
-  return clean(
-    s.name ||
-    a.name ||
-    s.kundenname ||
-    s.buyer ||
-    s.buyerName
+  return (
+    number(s.buyPrice) *
+    Math.max(
+      1,
+      number(s.qty)
+    )
   );
 }
 
+
+function saleProfit(s){
+
+  if(isStorno(s)){
+    return 0;
+  }
+
+  return (
+    saleRevenue(s)
+    -
+    saleShipping(s)
+    -
+    saleFees(s)
+    -
+    saleCost(s)
+  );
+}
+
+
+function validSales(){
+
+  return data.sales.filter(
+    s => !isStorno(s)
+  );
+}
+
+
+/* =========================================================
+   ADRESSE
+========================================================= */
+
+function addressParts(s){
+
+  const a =
+    s && s.address;
+
+  if(
+    typeof a === "object" &&
+    a !== null
+  ){
+
+    return {
+
+      name:clean(
+        a.name ||
+        a.vorname ||
+        a.fullName
+      ),
+
+      street:clean(
+        a.street ||
+        a.strasse ||
+        a.address
+      ),
+
+      zip:clean(
+        a.zip ||
+        a.plz ||
+        a.postcode
+      ),
+
+      city:clean(
+        a.city ||
+        a.stadt ||
+        a.ort
+      ),
+
+      country:clean(
+        a.country ||
+        a.land
+      )
+
+    };
+  }
+
+  return {
+
+    name:clean(s.name),
+
+    street:clean(a),
+
+    zip:clean(
+      s.zip ||
+      s.plz
+    ),
+
+    city:clean(
+      s.city ||
+      s.stadt
+    ),
+
+    country:""
+
+  };
+}
+
+
+function buyerName(s){
+
+  const a =
+    addressParts(s);
+
+  return clean(
+    s.name ||
+    s.kundenname ||
+    s.buyer ||
+    s.buyerName ||
+    a.name
+  );
+}
+
+
 function buyerCity(s){
-  const a = addressParts(s);
+
+  const a =
+    addressParts(s);
 
   return clean(
     a.city ||
     s.city ||
     s.stadt ||
-    s.kundenstadt ||
-    s.ort
+    s.kundenstadt
   );
 }
 
+
 function buyerZip(s){
-  const a = addressParts(s);
+
+  const a =
+    addressParts(s);
 
   return clean(
     a.zip ||
@@ -801,8 +1338,11 @@ function buyerZip(s){
   );
 }
 
+
 function buyerStreet(s){
-  const a = addressParts(s);
+
+  const a =
+    addressParts(s);
 
   return clean(
     a.street ||
@@ -811,177 +1351,393 @@ function buyerStreet(s){
   );
 }
 
+
+/* =========================================================
+   BELEG / RECHNUNG
+========================================================= */
+
+/*
+  Die App akzeptiert verschiedene Feldnamen.
+  Dadurch können ältere und neuere Daten
+  gleichermaßen verwendet werden.
+*/
+
+function getDocumentSource(object,type){
+
+  if(!object){
+    return "";
+  }
+
+  const fields =
+    type === "purchase"
+
+    ? [
+        "rechnungImg",
+        "rechnungImage",
+        "rechnung",
+        "belegImg",
+        "belegImage",
+        "beleg",
+        "receiptImg",
+        "receiptImage",
+        "receipt",
+        "invoiceImg",
+        "invoiceImage",
+        "invoice"
+      ]
+
+    : [
+        "invoiceImg",
+        "invoiceImage",
+        "rechnungImg",
+        "rechnungImage",
+        "rechnung",
+        "invoice",
+        "belegImg",
+        "belegImage",
+        "beleg"
+      ];
+
+  for(
+    const field of fields
+  ){
+
+    const value =
+      object[field];
+
+    if(
+      typeof value === "string" &&
+      value.trim()
+    ){
+      return value;
+    }
+
+  }
+
+  return "";
+}
+
+
+function getDocumentName(object,type){
+
+  if(!object){
+    return "Rechnung / Beleg";
+  }
+
+  return clean(
+    object.invoiceName ||
+    object.rechnungName ||
+    object.belegName ||
+    object.receiptName ||
+    (
+      type === "purchase"
+      ? "Einkaufsbeleg"
+      : "Verkaufsrechnung"
+    )
+  );
+}
+
+
 /* =========================================================
    UNIVERSAL SEARCH
 ========================================================= */
 
 function searchableSale(s){
 
-  const a = addressParts(s);
+  const a =
+    addressParts(s);
 
   return [
+
     s.invoiceNr,
     s.rechnungsnummer,
+
     s.artnr,
     s.name,
     s.artikelname,
+
     s.platform,
     normalizePlatform(s.platform),
+
     s.date,
     s.verkaufsdatum,
+
     s.buyDate,
     s.kaufdatum,
+
     s.sourcingLoc,
     normalizeSource(s.sourcingLoc),
+
     s.groesse,
     s.size,
-    normalizeSize(s.groesse),
+
     buyerName(s),
     buyerCity(s),
     buyerZip(s),
     buyerStreet(s),
+
     a.country,
+
     s.notiz,
     s.note,
+
     s.total,
     s.buyPrice,
     s.shipping,
     s.fees
-  ].map(clean).join(" | ").toLocaleLowerCase("de-DE");
+
+  ]
+  .map(clean)
+  .join(" | ")
+  .toLocaleLowerCase("de-DE");
 }
+
 
 function searchableArticle(a){
 
   return [
+
     a.artnr,
     a.name,
-    getArticleName(a.name),
+
+    getArticleGroup(a.name),
+
     a.groesse,
     a.size,
-    normalizeSize(a.groesse),
+
     a.zustand,
+
     a.ort,
     normalizeSource(a.ort),
+
     a.datum,
     a.kaufdatum,
+
     a.preis,
+
     a.notiz,
     a.note,
-    a.menge
-  ].map(clean).join(" | ").toLocaleLowerCase("de-DE");
+
+    a.menge,
+
+    getDocumentName(a,"purchase"),
+    getDocumentSource(a,"purchase")
+
+  ]
+  .map(clean)
+  .join(" | ")
+  .toLocaleLowerCase("de-DE");
 }
+
 
 function runSearch(){
 
-  const input = document.getElementById("globalSearch");
-  const q = lower(input.value);
+  const input =
+    document.getElementById(
+      "globalSearch"
+    );
 
-  document.getElementById("clearSearch").style.display =
-    q ? "block" : "none";
+  const query =
+    lower(input.value);
 
-  if(!q){
-    searchResults = [];
+  document
+    .getElementById("clearSearch")
+    .style.display =
+      query
+      ? "block"
+      : "none";
+
+  if(!query){
+
+    searchResults = {
+      sales:[],
+      articles:[]
+    };
+
+    currentTab = "overview";
+
+    updateTabs();
     render();
+
     return;
   }
 
-  const terms = q
-    .split(/\s+/)
-    .filter(Boolean);
+  const terms =
+    query
+      .split(/\s+/)
+      .filter(Boolean);
 
-  const sales = data.sales.filter(s => {
+  const sales =
+    data.sales.filter(s=>{
 
-    const text = searchableSale(s);
+      const text =
+        searchableSale(s);
 
-    return terms.every(term => text.includes(term));
-  });
+      return terms.every(
+        term => text.includes(term)
+      );
 
-  const articles = data.artikel.filter(a => {
+    });
 
-    const text = searchableArticle(a);
+  const articles =
+    data.artikel.filter(a=>{
 
-    return terms.every(term => text.includes(term));
-  });
+      const text =
+        searchableArticle(a);
 
-  searchResults = {sales,articles};
+      return terms.every(
+        term => text.includes(term)
+      );
+
+    });
+
+  searchResults = {
+    sales,
+    articles
+  };
 
   currentTab = "search";
+
   updateTabs();
   renderSearch();
 }
 
+
+function searchText(text){
+
+  const input =
+    document.getElementById(
+      "globalSearch"
+    );
+
+  input.value = text;
+
+  runSearch();
+}
+
+
 function clearSearch(){
-  document.getElementById("globalSearch").value = "";
-  document.getElementById("clearSearch").style.display = "none";
-  searchResults = [];
+
+  document.getElementById(
+    "globalSearch"
+  ).value = "";
+
+  document.getElementById(
+    "clearSearch"
+  ).style.display = "none";
+
+  searchResults = {
+    sales:[],
+    articles:[]
+  };
+
   currentTab = "overview";
+
   updateTabs();
   render();
 }
 
+
 /* =========================================================
-   LOKALE DATEN
+   LOCAL STORAGE
 ========================================================= */
 
 function loadLocalData(){
 
   try{
-    const saved = localStorage.getItem(STORAGE_KEY);
+
+    const saved =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
 
     if(saved){
-      const parsed = JSON.parse(saved);
 
-      if(parsed && typeof parsed === "object"){
-        data.artikel = Array.isArray(parsed.artikel)
-          ? parsed.artikel
-          : [];
+      const parsed =
+        JSON.parse(saved);
 
-        data.sales = Array.isArray(parsed.sales)
-          ? parsed.sales
-          : [];
-      }
+      data.artikel =
+        Array.isArray(parsed.artikel)
+        ? parsed.artikel
+        : [];
+
+      data.sales =
+        Array.isArray(parsed.sales)
+        ? parsed.sales
+        : [];
+
     }
-  }catch(e){
-    console.warn(e);
+
+  }catch(error){
+
+    console.error(
+      "Daten konnten nicht geladen werden:",
+      error
+    );
+
   }
 }
 
+
 function saveLocalData(){
+
   try{
+
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify(data)
     );
-  }catch(e){
-    console.warn(e);
+
+  }catch(error){
+
+    console.error(error);
+
   }
 }
+
 
 /* =========================================================
    IMPORT
 ========================================================= */
 
 function openImport(){
-  document.getElementById("importModal").classList.add("show");
+
+  document
+    .getElementById("importModal")
+    .classList.add("show");
+
 }
 
+
 function closeImport(){
-  document.getElementById("importModal").classList.remove("show");
+
+  document
+    .getElementById("importModal")
+    .classList.remove("show");
+
 }
+
 
 function importJSON(event){
 
-  const file = event.target.files[0];
+  const file =
+    event.target.files[0];
 
-  if(!file) return;
+  if(!file){
+    return;
+  }
 
-  const reader = new FileReader();
+  const reader =
+    new FileReader();
 
-  reader.onload = e => {
+  reader.onload = event => {
 
     try{
 
-      const parsed = JSON.parse(e.target.result);
+      const parsed =
+        JSON.parse(
+          event.target.result
+        );
 
       const artikel =
         parsed.artikel ||
@@ -996,34 +1752,53 @@ function importJSON(event){
         [];
 
       data = {
-        artikel:Array.isArray(artikel) ? artikel : [],
-        sales:Array.isArray(sales) ? sales : []
+
+        artikel:
+          Array.isArray(artikel)
+          ? artikel
+          : [],
+
+        sales:
+          Array.isArray(sales)
+          ? sales
+          : []
+
       };
 
       saveLocalData();
+
       closeImport();
 
       currentTab = "overview";
+
       updateTabs();
       render();
 
       alert(
         "Import erfolgreich.\n\n" +
-        data.artikel.length + " Artikel\n" +
-        data.sales.length + " Verkäufe"
+        data.artikel.length +
+        " Artikel\n" +
+        data.sales.length +
+        " Verkäufe"
       );
 
-    }catch(err){
+    }catch(error){
 
-      alert("Die JSON-Datei konnte nicht gelesen werden.");
-      console.error(err);
+      console.error(error);
+
+      alert(
+        "Die JSON-Datei konnte nicht gelesen werden."
+      );
+
     }
 
     event.target.value = "";
+
   };
 
   reader.readAsText(file);
 }
+
 
 /* =========================================================
    EXPORT
@@ -1031,25 +1806,44 @@ function importJSON(event){
 
 function exportData(){
 
-  const blob = new Blob(
-    [JSON.stringify(data,null,2)],
-    {type:"application/json"}
-  );
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      ],
+      {
+        type:"application/json"
+      }
+    );
 
-  const url = URL.createObjectURL(blob);
+  const url =
+    URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
+  const link =
+    document.createElement("a");
 
-  a.href = url;
-  a.download =
+  link.href = url;
+
+  link.download =
     "LagerManager-Analytics-" +
-    new Date().toISOString().slice(0,10) +
+    new Date()
+      .toISOString()
+      .slice(0,10) +
     ".json";
 
-  a.click();
+  document.body.appendChild(link);
+
+  link.click();
+
+  link.remove();
 
   URL.revokeObjectURL(url);
 }
+
 
 /* =========================================================
    TABS
@@ -1063,104 +1857,155 @@ function setTab(tab){
   render();
 }
 
+
 function updateTabs(){
 
-  document.querySelectorAll(".tab").forEach(x =>
-    x.classList.remove("active")
-  );
+  document
+    .querySelectorAll(".tab")
+    .forEach(
+      button =>
+        button.classList.remove("active")
+    );
 
   const map = {
+
     overview:"tabOverview",
     sales:"tabSales",
     purchases:"tabPurchases",
     search:"tabSearch"
+
   };
 
-  const el = document.getElementById(map[currentTab]);
+  const button =
+    document.getElementById(
+      map[currentTab]
+    );
 
-  if(el) el.classList.add("active");
+  if(button){
+    button.classList.add("active");
+  }
+
 }
+
 
 /* =========================================================
    STATISTIK
 ========================================================= */
 
-function getValidSales(){
-  return data.sales.filter(s => !isStorno(s));
-}
+function totalRevenue(){
 
-function getRevenue(){
-  return getValidSales()
-    .reduce((sum,s) => sum + saleRevenue(s),0);
-}
-
-function getCosts(){
-  return getValidSales()
-    .reduce((sum,s) => sum + saleCost(s),0);
-}
-
-function getExpenses(){
-  return getValidSales()
+  return validSales()
     .reduce(
-      (sum,s) =>
-        sum + saleShipping(s) + saleFees(s),
+      (sum,s)=>
+        sum + saleRevenue(s),
       0
     );
 }
 
-function getProfit(){
-  return getValidSales()
-    .reduce((sum,s) => sum + saleProfit(s),0);
-}
 
-function getSoldQty(){
-  return getValidSales()
+function totalCosts(){
+
+  return validSales()
     .reduce(
-      (sum,s) =>
-        sum + Math.max(1,number(s.qty)),
+      (sum,s)=>
+        sum + saleCost(s),
       0
     );
 }
 
-function getInventoryQty(){
-  return data.artikel
-    .reduce(
-      (sum,a) =>
-        sum + Math.max(0,number(a.menge)),
-      0
-    );
-}
 
-function getInventoryValue(){
-  return data.artikel
+function totalExpenses(){
+
+  return validSales()
     .reduce(
-      (sum,a) =>
+      (sum,s)=>
         sum +
-        Math.max(0,number(a.menge)) *
+        saleShipping(s) +
+        saleFees(s),
+      0
+    );
+}
+
+
+function totalProfit(){
+
+  return validSales()
+    .reduce(
+      (sum,s)=>
+        sum + saleProfit(s),
+      0
+    );
+}
+
+
+function soldQuantity(){
+
+  return validSales()
+    .reduce(
+      (sum,s)=>
+        sum +
+        Math.max(
+          1,
+          number(s.qty)
+        ),
+      0
+    );
+}
+
+
+function inventoryQuantity(){
+
+  return data.artikel
+    .reduce(
+      (sum,a)=>
+        sum +
+        Math.max(
+          0,
+          number(a.menge)
+        ),
+      0
+    );
+}
+
+
+function inventoryValue(){
+
+  return data.artikel
+    .reduce(
+      (sum,a)=>
+        sum +
+        Math.max(
+          0,
+          number(a.menge)
+        ) *
         number(a.preis),
       0
     );
 }
 
-function getAverageMargin(){
 
-  const revenue = getRevenue();
+function averageMargin(){
 
-  if(!revenue) return 0;
+  const revenue =
+    totalRevenue();
 
-  return getProfit() / revenue * 100;
+  if(!revenue){
+    return 0;
+  }
+
+  return (
+    totalProfit() /
+    revenue *
+    100
+  );
 }
+
 
 /* =========================================================
    RENDER
 ========================================================= */
 
 function render(){
-
-  if(currentTab === "search"){
-    renderSearch();
-    return;
-  }
 
   if(currentTab === "sales"){
     renderSales();
@@ -1172,122 +2017,213 @@ function render(){
     return;
   }
 
+  if(currentTab === "search"){
+    renderSearch();
+    return;
+  }
+
   renderOverview();
 }
 
+
 /* =========================================================
-   OVERVIEW
+   ÜBERSICHT
 ========================================================= */
 
 function renderOverview(){
 
-  const revenue = getRevenue();
-  const costs = getCosts();
-  const expenses = getExpenses();
-  const profit = getProfit();
+  const profit =
+    totalProfit();
 
-  document.getElementById("content").innerHTML = `
+  const revenue =
+    totalRevenue();
+
+  const costs =
+    totalCosts();
+
+  const expenses =
+    totalExpenses();
+
+  document.getElementById(
+    "content"
+  ).innerHTML = `
 
     <div class="stats">
 
       <div class="stat">
-        <div class="statLabel">Nettogewinn</div>
-        <div class="statValue ${profit >= 0 ? "green":"red"}">
+        <div class="statLabel">
+          Nettogewinn
+        </div>
+
+        <div class="statValue ${
+          profit >= 0
+          ? "green"
+          : "red"
+        }">
           ${formatEuro(profit)}
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Gesamtumsatz</div>
+        <div class="statLabel">
+          Gesamtumsatz
+        </div>
+
         <div class="statValue">
           ${formatEuro(revenue)}
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Einkaufskosten Verkäufe</div>
+        <div class="statLabel">
+          Einkaufskosten Verkäufe
+        </div>
+
         <div class="statValue">
           ${formatEuro(costs)}
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Versand + Gebühren</div>
+        <div class="statLabel">
+          Versand + Gebühren
+        </div>
+
         <div class="statValue">
           ${formatEuro(expenses)}
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Verkaufte Stück</div>
+        <div class="statLabel">
+          Verkaufte Stück
+        </div>
+
         <div class="statValue">
-          ${getSoldQty()}
+          ${soldQuantity()}
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Ø Gewinn/Stück</div>
-        <div class="statValue ${profit >= 0 ? "green":"red"}">
-          ${formatEuro(getSoldQty() ? profit/getSoldQty() : 0)}
+        <div class="statLabel">
+          Ø Gewinn/Stück
+        </div>
+
+        <div class="statValue ${
+          profit >= 0
+          ? "green"
+          : "red"
+        }">
+          ${formatEuro(
+            soldQuantity()
+            ? profit / soldQuantity()
+            : 0
+          )}
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Gewinnmarge</div>
-        <div class="statValue ${getAverageMargin() >= 0 ? "green":"red"}">
-          ${getAverageMargin().toFixed(1)}%
+        <div class="statLabel">
+          Gewinnmarge
+        </div>
+
+        <div class="statValue ${
+          averageMargin() >= 0
+          ? "green"
+          : "red"
+        }">
+          ${averageMargin().toFixed(1)}%
         </div>
       </div>
 
       <div class="stat">
-        <div class="statLabel">Lagerwert EK</div>
+        <div class="statLabel">
+          Lagerwert EK
+        </div>
+
         <div class="statValue">
-          ${formatEuro(getInventoryValue())}
+          ${formatEuro(
+            inventoryValue()
+          )}
         </div>
       </div>
 
     </div>
 
+
     <div class="section">
+
       <div class="sectionHeader">
-        <div class="sectionTitle">Verkaufsplattformen</div>
+
+        <div class="sectionTitle">
+          Verkaufsplattformen
+        </div>
+
       </div>
+
       <div class="card">
         ${renderPlatforms()}
       </div>
+
     </div>
 
+
     <div class="section">
+
       <div class="sectionHeader">
-        <div class="sectionTitle">Einkaufsorte</div>
+
+        <div class="sectionTitle">
+          Einkaufsorte
+        </div>
+
       </div>
+
       <div class="card">
         ${renderSources()}
       </div>
+
     </div>
 
-    <div class="section">
-      <div class="sectionHeader">
-        <div class="sectionTitle">Top Artikelgruppen nach Gewinn</div>
-      </div>
-      <div class="card">
-        ${renderArticleGroups()}
-      </div>
-    </div>
 
     <div class="section">
+
       <div class="sectionHeader">
-        <div class="sectionTitle">Aktueller Lagerbestand</div>
-        <div class="sectionInfo">
-          ${getInventoryQty()} Stück
+
+        <div class="sectionTitle">
+          Artikelgruppen
         </div>
+
       </div>
+
+      <div class="card">
+        ${renderGroups()}
+      </div>
+
+    </div>
+
+
+    <div class="section">
+
+      <div class="sectionHeader">
+
+        <div class="sectionTitle">
+          Aktueller Lagerbestand
+        </div>
+
+        <div class="sectionInfo">
+          ${inventoryQuantity()} Stück
+        </div>
+
+      </div>
+
       <div class="card">
         ${renderInventory()}
       </div>
+
     </div>
   `;
 }
+
 
 /* =========================================================
    PLATTFORMEN
@@ -1297,51 +2233,102 @@ function renderPlatforms(){
 
   const map = {};
 
-  getValidSales().forEach(s => {
+  validSales().forEach(s=>{
 
-    const p = normalizePlatform(s.platform);
+    const platform =
+      normalizePlatform(
+        s.platform
+      );
 
-    if(!map[p]){
-      map[p] = {
+    if(!map[platform]){
+
+      map[platform] = {
         revenue:0,
         profit:0,
         qty:0
       };
+
     }
 
-    map[p].revenue += saleRevenue(s);
-    map[p].profit += saleProfit(s);
-    map[p].qty += Math.max(1,number(s.qty));
+    map[platform].revenue +=
+      saleRevenue(s);
+
+    map[platform].profit +=
+      saleProfit(s);
+
+    map[platform].qty +=
+      Math.max(
+        1,
+        number(s.qty)
+      );
+
   });
 
-  const arr = Object.entries(map)
-    .sort((a,b) => b[1].revenue - a[1].revenue);
+  const entries =
+    Object.entries(map)
+      .sort(
+        (a,b)=>
+          b[1].revenue -
+          a[1].revenue
+      );
 
-  if(!arr.length){
-    return `<div class="empty">Noch keine Verkäufe vorhanden.</div>`;
+  if(!entries.length){
+
+    return `
+      <div class="empty">
+        Noch keine Verkäufe vorhanden.
+      </div>
+    `;
   }
 
-  return arr.map(([name,v]) => `
+  return entries.map(
+    ([name,value])=>`
 
-    <div class="row">
-      <div class="rowTop">
-        <div>
-          <div class="rowTitle">${escapeHTML(name)}</div>
-          <div class="rowSub">${v.qty} Stück</div>
+      <div class="row">
+
+        <div class="rowTop">
+
+          <div>
+
+            <div class="rowTitle">
+              ${escapeHTML(name)}
+            </div>
+
+            <div class="rowSub">
+              ${value.qty} Stück
+            </div>
+
+          </div>
+
+          <div class="rowValue">
+
+            ${formatEuro(
+              value.revenue
+            )}
+
+            <br>
+
+            <span class="${
+              value.profit >= 0
+              ? "green"
+              : "red"
+            }">
+
+              ${formatEuro(
+                value.profit
+              )}
+
+            </span>
+
+          </div>
+
         </div>
 
-        <div class="rowValue">
-          ${formatEuro(v.revenue)}
-          <br>
-          <span class="${v.profit >= 0 ? "green":"red"}">
-            ${formatEuro(v.profit)}
-          </span>
-        </div>
       </div>
-    </div>
-
-  `).join("");
+    `
+  ).join("");
 }
+
 
 /* =========================================================
    EINKAUFSORTE
@@ -1351,122 +2338,200 @@ function renderSources(){
 
   const map = {};
 
-  data.artikel.forEach(a => {
+  data.artikel.forEach(a=>{
 
-    const source = normalizeSource(a.ort);
+    const source =
+      normalizeSource(a.ort);
 
     if(!map[source]){
+
       map[source] = {
         qty:0,
         value:0,
         items:0
       };
+
     }
 
-    map[source].qty += Math.max(0,number(a.menge));
+    map[source].qty +=
+      Math.max(
+        0,
+        number(a.menge)
+      );
+
     map[source].value +=
-      Math.max(0,number(a.menge)) * number(a.preis);
+      Math.max(
+        0,
+        number(a.menge)
+      ) *
+      number(a.preis);
 
     map[source].items++;
+
   });
 
-  const arr = Object.entries(map)
-    .sort((a,b) => b[1].value - a[1].value);
+  const entries =
+    Object.entries(map)
+      .sort(
+        (a,b)=>
+          b[1].value -
+          a[1].value
+      );
 
-  if(!arr.length){
-    return `<div class="empty">Keine Einkaufsorte vorhanden.</div>`;
+  if(!entries.length){
+
+    return `
+      <div class="empty">
+        Keine Einkaufsorte vorhanden.
+      </div>
+    `;
   }
 
-  return arr.map(([source,v]) => `
+  return entries.map(
+    ([source,value])=>`
 
-    <div class="row">
-      <div class="rowTop">
+      <div class="row">
 
-        <div>
-          <div class="rowTitle">
-            ${escapeHTML(source)}
+        <div class="rowTop">
+
+          <div>
+
+            <div class="rowTitle">
+              ${escapeHTML(source)}
+            </div>
+
+            <div class="rowSub">
+              ${value.items} Positionen
+              ·
+              ${value.qty} Stück
+            </div>
+
           </div>
 
-          <div class="rowSub">
-            ${v.items} Positionen · ${v.qty} Stück
+          <div class="rowValue">
+            ${formatEuro(
+              value.value
+            )}
           </div>
+
         </div>
 
-        <div class="rowValue">
-          ${formatEuro(v.value)}
+        <div class="actions">
+
+          <button
+            class="smallButton"
+            onclick='showPurchaseSource(${JSON.stringify(source)})'>
+
+            Einkäufe anzeigen
+
+          </button>
+
         </div>
 
       </div>
-
-      <div class="actions">
-        <button class="smallBtn"
-          onclick='showPurchaseSource(${JSON.stringify(source)})'>
-          Einkäufe anzeigen
-        </button>
-      </div>
-
-    </div>
-
-  `).join("");
+    `
+  ).join("");
 }
+
 
 /* =========================================================
    ARTIKELGRUPPEN
 ========================================================= */
 
-function renderArticleGroups(){
+function renderGroups(){
 
   const map = {};
 
-  getValidSales().forEach(s => {
+  validSales().forEach(s=>{
 
-    const name =
-      getArticleName(s.name || s.artikelname);
+    const group =
+      getArticleGroup(
+        s.name ||
+        s.artikelname
+      );
 
-    if(!map[name]){
-      map[name] = {
+    if(!map[group]){
+
+      map[group] = {
         revenue:0,
         profit:0,
         qty:0
       };
+
     }
 
-    map[name].revenue += saleRevenue(s);
-    map[name].profit += saleProfit(s);
-    map[name].qty += Math.max(1,number(s.qty));
+    map[group].revenue +=
+      saleRevenue(s);
+
+    map[group].profit +=
+      saleProfit(s);
+
+    map[group].qty +=
+      Math.max(
+        1,
+        number(s.qty)
+      );
+
   });
 
-  const arr = Object.entries(map)
-    .sort((a,b) => b[1].profit - a[1].profit)
-    .slice(0,15);
+  const entries =
+    Object.entries(map)
+      .sort(
+        (a,b)=>
+          b[1].profit -
+          a[1].profit
+      )
+      .slice(0,20);
 
-  if(!arr.length){
-    return `<div class="empty">Keine Verkaufsdaten vorhanden.</div>`;
+  if(!entries.length){
+
+    return `
+      <div class="empty">
+        Keine Verkaufsdaten vorhanden.
+      </div>
+    `;
   }
 
-  return arr.map(([name,v]) => `
+  return entries.map(
+    ([group,value])=>`
 
-    <div class="row">
+      <div class="row">
 
-      <div class="rowTop">
-        <div>
-          <div class="rowTitle">${escapeHTML(name)}</div>
-          <div class="rowSub">${v.qty} verkaufte Stück</div>
+        <div class="rowTop">
+
+          <div>
+
+            <div class="rowTitle">
+              ${escapeHTML(group)}
+            </div>
+
+            <div class="rowSub">
+              ${value.qty} verkaufte Stück
+              · Umsatz
+              ${formatEuro(value.revenue)}
+            </div>
+
+          </div>
+
+          <div class="rowValue ${
+            value.profit >= 0
+            ? "green"
+            : "red"
+          }">
+
+            ${formatEuro(
+              value.profit
+            )}
+
+          </div>
+
         </div>
 
-        <div class="rowValue ${v.profit >= 0 ? "green":"red"}">
-          ${formatEuro(v.profit)}
-        </div>
       </div>
-
-      <div class="rowSub">
-        Umsatz ${formatEuro(v.revenue)}
-      </div>
-
-    </div>
-
-  `).join("");
+    `
+  ).join("");
 }
+
 
 /* =========================================================
    LAGER
@@ -1474,22 +2539,47 @@ function renderArticleGroups(){
 
 function renderInventory(){
 
-  const arr = [...data.artikel]
-    .sort((a,b) =>
-      dateValue(a.datum || a.kaufdatum) -
-      dateValue(b.datum || b.kaufdatum)
-    )
-    .slice(0,30);
+  const articles =
+    [...data.artikel]
+      .sort(
+        (a,b)=>
+          dateValue(
+            a.datum ||
+            a.kaufdatum
+          )
+          -
+          dateValue(
+            b.datum ||
+            b.kaufdatum
+          )
+      )
+      .slice(0,40);
 
-  if(!arr.length){
-    return `<div class="empty">Kein Lagerbestand vorhanden.</div>`;
+  if(!articles.length){
+
+    return `
+      <div class="empty">
+        Kein Lagerbestand vorhanden.
+      </div>
+    `;
   }
 
-  return arr.map(a => {
+  return articles.map(a=>{
 
-    const qty = number(a.menge);
-    const price = number(a.preis);
-    const total = qty * price;
+    const qty =
+      number(a.menge);
+
+    const price =
+      number(a.preis);
+
+    const total =
+      qty * price;
+
+    const purchaseDocument =
+      getDocumentSource(
+        a,
+        "purchase"
+      );
 
     return `
 
@@ -1498,39 +2588,110 @@ function renderInventory(){
         <div class="rowTop">
 
           <div>
+
             <div class="rowTitle">
-              ${escapeHTML(a.name || "Unbekannter Artikel")}
+              ${escapeHTML(
+                a.name ||
+                "Unbekannter Artikel"
+              )}
             </div>
 
             <div class="rowSub">
-              ${escapeHTML(a.artnr || "—")}
-              · Größe ${escapeHTML(a.groesse || "—")}
-              · ${escapeHTML(a.zustand || "—")}
+
+              ${escapeHTML(
+                a.artnr || "—"
+              )}
+
+              · Größe
+              ${escapeHTML(
+                a.groesse ||
+                a.size ||
+                "—"
+              )}
+
               <br>
-              ${escapeHTML(normalizeSource(a.ort))}
-              · ${formatDate(a.datum || a.kaufdatum)}
+
+              ${escapeHTML(
+                normalizeSource(a.ort)
+              )}
+
+              ·
+              ${formatDate(
+                a.datum ||
+                a.kaufdatum
+              )}
+
             </div>
+
           </div>
 
           <div class="rowValue">
-            ${qty} × ${formatEuro(price)}
+
+            ${qty}
+            ×
+            ${formatEuro(price)}
+
             <br>
+
             ${formatEuro(total)}
+
           </div>
 
         </div>
 
+
         <div class="actions">
 
-          <button class="smallBtn"
-            onclick='showArticle(${JSON.stringify(a.id || a.artnr || "")})'>
+          <button
+            class="smallButton"
+            onclick='showArticle(${JSON.stringify(
+              a.id ||
+              a.artnr ||
+              ""
+            )})'>
+
             Details
+
           </button>
 
-          <button class="smallBtn"
-            onclick='findSalesForArticle(${JSON.stringify(a.artnr || "")})'>
+
+          <button
+            class="smallButton"
+            onclick='findSalesForArticle(${JSON.stringify(
+              a.artnr ||
+              ""
+            )})'>
+
             Verkäufe
+
           </button>
+
+
+          ${
+            purchaseDocument
+            ?
+            `
+              <button
+                class="smallButton greenButton"
+                onclick='openDocument(
+                  ${JSON.stringify(
+                    purchaseDocument
+                  )},
+                  ${JSON.stringify(
+                    getDocumentName(
+                      a,
+                      "purchase"
+                    )
+                  )}
+                )'>
+
+                Rechnung / Beleg
+
+              </button>
+            `
+            :
+            ""
+          }
 
         </div>
 
@@ -1540,45 +2701,75 @@ function renderInventory(){
   }).join("");
 }
 
+
 /* =========================================================
    VERKÄUFE
 ========================================================= */
 
 function renderSales(){
 
-  const sales = [...data.sales]
-    .sort((a,b) =>
-      dateValue(b.date) -
-      dateValue(a.date)
-    );
+  const sales =
+    [...data.sales]
+      .sort(
+        (a,b)=>
+          dateValue(b.date) -
+          dateValue(a.date)
+      );
 
-  document.getElementById("content").innerHTML = `
+  document.getElementById(
+    "content"
+  ).innerHTML = `
 
     <div class="section">
+
       <div class="sectionHeader">
-        <div class="sectionTitle">Verkäufe</div>
+
+        <div class="sectionTitle">
+          Verkäufe
+        </div>
+
         <div class="sectionInfo">
           ${sales.length} Datensätze
         </div>
+
       </div>
 
       <div class="card">
 
         ${
           sales.length
-          ? sales.map(renderSaleRow).join("")
-          : `<div class="empty">Keine Verkäufe vorhanden.</div>`
+          ?
+          sales
+            .map(renderSaleRow)
+            .join("")
+          :
+          `
+            <div class="empty">
+              Keine Verkäufe vorhanden.
+            </div>
+          `
         }
 
       </div>
+
     </div>
   `;
 }
 
+
 function renderSaleRow(s){
 
-  const profit = saleProfit(s);
-  const address = addressParts(s);
+  const profit =
+    saleProfit(s);
+
+  const address =
+    addressParts(s);
+
+  const invoice =
+    getDocumentSource(
+      s,
+      "sale"
+    );
 
   return `
 
@@ -1589,67 +2780,122 @@ function renderSaleRow(s){
         <div>
 
           <div class="rowTitle">
-            ${escapeHTML(s.name || s.artikelname || "Unbekannter Artikel")}
+            ${escapeHTML(
+              s.name ||
+              s.artikelname ||
+              "Unbekannter Artikel"
+            )}
           </div>
 
           <div class="rowSub">
 
             <span class="badge">
-              ${escapeHTML(normalizePlatform(s.platform))}
+              ${escapeHTML(
+                normalizePlatform(
+                  s.platform
+                )
+              )}
             </span>
 
             ${
               isStorno(s)
-              ? `<span class="badge redBadge">STORNO</span>`
-              : ""
+              ?
+              `
+                <span class="badge redBadge">
+                  STORNO
+                </span>
+              `
+              :
+              ""
             }
 
             <br>
 
-            ${escapeHTML(s.invoiceNr || "Keine Rechnungsnummer")}
-            · ${formatDate(s.date)}
+            ${escapeHTML(
+              s.invoiceNr ||
+              s.rechnungsnummer ||
+              "Keine Rechnungsnummer"
+            )}
+
+            ·
+
+            ${formatDate(
+              s.date ||
+              s.verkaufsdatum
+            )}
 
           </div>
 
         </div>
 
+
         <div class="rowValue">
 
-          ${formatEuro(s.total)}
+          ${formatEuro(
+            s.total
+          )}
 
           <br>
 
-          <span class="${profit >= 0 ? "green":"red"}">
-            ${formatEuro(profit)}
+          <span class="${
+            profit >= 0
+            ? "green"
+            : "red"
+          }">
+
+            ${formatEuro(
+              profit
+            )}
+
           </span>
 
         </div>
 
       </div>
 
+
       <div class="rowSub">
 
         Käufer:
-        <b>${escapeHTML(buyerName(s) || "—")}</b>
-
-        ${
-          buyerCity(s)
-          ? " · " + escapeHTML(buyerCity(s))
-          : ""
-        }
+        <b>
+          ${escapeHTML(
+            buyerName(s) ||
+            "—"
+          )}
+        </b>
 
         ${
           buyerZip(s)
-          ? " · " + escapeHTML(buyerZip(s))
-          : ""
+          ?
+          " · " +
+          escapeHTML(
+            buyerZip(s)
+          )
+          :
+          ""
+        }
+
+        ${
+          buyerCity(s)
+          ?
+          " · " +
+          escapeHTML(
+            buyerCity(s)
+          )
+          :
+          ""
         }
 
       </div>
 
+
       <div class="rowSub">
 
         Artikel:
-        ${escapeHTML(s.artnr || "—")}
+        ${escapeHTML(
+          s.artnr ||
+          "—"
+        )}
 
         · Größe:
         ${escapeHTML(
@@ -1660,27 +2906,72 @@ function renderSaleRow(s){
 
       </div>
 
+
       <div class="actions">
 
-        <button class="smallBtn"
-          onclick='showSale(${JSON.stringify(s.id)})'>
+        <button
+          class="smallButton"
+          onclick='showSale(${JSON.stringify(
+            s.id
+          )})'>
+
           Details
+
         </button>
 
-        <button class="smallBtn"
-          onclick='copySale(${JSON.stringify(s.id)})'>
+
+        <button
+          class="smallButton"
+          onclick='copySale(${JSON.stringify(
+            s.id
+          )})'>
+
           Kopieren
+
         </button>
+
 
         ${
-          address.city
-          ? `
-            <button class="smallBtn"
-              onclick='searchText(${JSON.stringify(address.city)})'>
-              Stadt suchen
+          invoice
+          ?
+          `
+            <button
+              class="smallButton greenButton"
+              onclick='openDocument(
+                ${JSON.stringify(invoice)},
+                ${JSON.stringify(
+                  getDocumentName(
+                    s,
+                    "sale"
+                  )
+                )}
+              )'>
+
+              Verkaufsrechnung
+
             </button>
           `
-          : ""
+          :
+          ""
+        }
+
+
+        ${
+          buyerCity(s)
+          ?
+          `
+            <button
+              class="smallButton"
+              onclick='searchText(${JSON.stringify(
+                buyerCity(s)
+              )})'>
+
+              Stadt suchen
+
+            </button>
+          `
+          :
+          ""
         }
 
       </div>
@@ -1688,6 +2979,7 @@ function renderSaleRow(s){
     </div>
   `;
 }
+
 
 /* =========================================================
    EINKÄUFE
@@ -1695,30 +2987,54 @@ function renderSaleRow(s){
 
 function renderPurchases(){
 
-  const articles = [...data.artikel]
-    .sort((a,b) =>
-      dateValue(a.datum || a.kaufdatum) -
-      dateValue(b.datum || b.kaufdatum)
-    );
+  const articles =
+    [...data.artikel]
+      .sort(
+        (a,b)=>
+          dateValue(
+            a.datum ||
+            a.kaufdatum
+          )
+          -
+          dateValue(
+            b.datum ||
+            b.kaufdatum
+          )
+      );
 
-  document.getElementById("content").innerHTML = `
+  document.getElementById(
+    "content"
+  ).innerHTML = `
 
     <div class="section">
 
       <div class="sectionHeader">
-        <div class="sectionTitle">Einkäufe</div>
+
+        <div class="sectionTitle">
+          Einkäufe
+        </div>
 
         <div class="sectionInfo">
           ${articles.length} Positionen
         </div>
+
       </div>
+
 
       <div class="card">
 
         ${
           articles.length
-          ? articles.map(renderPurchaseRow).join("")
-          : `<div class="empty">Keine Einkaufsdaten vorhanden.</div>`
+          ?
+          articles
+            .map(renderPurchaseRow)
+            .join("")
+          :
+          `
+            <div class="empty">
+              Keine Einkaufsdaten vorhanden.
+            </div>
+          `
         }
 
       </div>
@@ -1727,15 +3043,33 @@ function renderPurchases(){
   `;
 }
 
+
 function renderPurchaseRow(a){
 
-  const qty = Math.max(0,number(a.menge));
-  const unit = number(a.preis);
-  const total = qty * unit;
+  const qty =
+    Math.max(
+      0,
+      number(a.menge)
+    );
 
-  const matchingSales = data.sales.filter(s =>
-    clean(s.artnr) === clean(a.artnr)
-  );
+  const unit =
+    number(a.preis);
+
+  const total =
+    qty * unit;
+
+  const documentSource =
+    getDocumentSource(
+      a,
+      "purchase"
+    );
+
+  const sales =
+    data.sales.filter(
+      s =>
+        clean(s.artnr) ===
+        clean(a.artnr)
+    );
 
   return `
 
@@ -1746,70 +3080,153 @@ function renderPurchaseRow(a){
         <div>
 
           <div class="rowTitle">
-            ${escapeHTML(a.name || "Unbekannter Artikel")}
+            ${escapeHTML(
+              a.name ||
+              "Unbekannter Artikel"
+            )}
           </div>
 
           <div class="rowSub">
 
             Art.-Nr.:
-            ${escapeHTML(a.artnr || "—")}
+            ${escapeHTML(
+              a.artnr ||
+              "—"
+            )}
 
             <br>
 
             Einkaufsort:
-            <b>${escapeHTML(normalizeSource(a.ort))}</b>
+            <b>
+              ${escapeHTML(
+                normalizeSource(
+                  a.ort
+                )
+              )}
+            </b>
 
             <br>
 
             Kaufdatum:
-            ${formatDate(a.datum || a.kaufdatum)}
+            ${formatDate(
+              a.datum ||
+              a.kaufdatum
+            )}
 
             · Größe:
-            ${escapeHTML(a.groesse || "—")}
+            ${escapeHTML(
+              a.groesse ||
+              a.size ||
+              "—"
+            )}
 
           </div>
 
         </div>
 
+
         <div class="rowValue">
 
-          ${qty} × ${formatEuro(unit)}
+          ${qty}
+          ×
+          ${formatEuro(unit)}
 
           <br>
 
-          <b>${formatEuro(total)}</b>
+          <b>
+            ${formatEuro(total)}
+          </b>
 
         </div>
 
       </div>
 
+
       ${
-        matchingSales.length
-        ? `
+        sales.length
+        ?
+        `
           <div class="rowSub">
-            ${matchingSales.length} zugehörige Verkäufe gefunden.
+            ${sales.length}
+            zugehörige Verkäufe gefunden.
           </div>
         `
-        : ""
+        :
+        ""
       }
+
 
       <div class="actions">
 
-        <button class="smallBtn"
-          onclick='showArticle(${JSON.stringify(a.id || a.artnr || "")})'>
+        <button
+          class="smallButton"
+          onclick='showArticle(${JSON.stringify(
+            a.id ||
+            a.artnr ||
+            ""
+          )})'>
+
           Einkaufsdetails
+
         </button>
 
-        <button class="smallBtn"
-          onclick='findSalesForArticle(${JSON.stringify(a.artnr || "")})'>
+
+        <button
+          class="smallButton"
+          onclick='findSalesForArticle(${JSON.stringify(
+            a.artnr ||
+            ""
+          )})'>
+
           Verkäufe prüfen
+
         </button>
+
+
+        ${
+          documentSource
+          ?
+          `
+            <button
+              class="smallButton greenButton"
+              onclick='openDocument(
+                ${JSON.stringify(
+                  documentSource
+                )},
+                ${JSON.stringify(
+                  getDocumentName(
+                    a,
+                    "purchase"
+                  )
+                )}
+              )'>
+
+              Rechnung / Beleg
+
+            </button>
+          `
+          :
+          `
+            <button
+              class="smallButton"
+              onclick='showArticle(${JSON.stringify(
+                a.id ||
+                a.artnr ||
+                ""
+              )})'>
+
+              Beleg prüfen
+
+            </button>
+          `
+        }
 
       </div>
 
     </div>
   `;
 }
+
 
 /* =========================================================
    SUCHE
@@ -1817,56 +3234,104 @@ function renderPurchaseRow(a){
 
 function renderSearch(){
 
-  const s = searchResults.sales || [];
-  const a = searchResults.articles || [];
+  const sales =
+    searchResults.sales || [];
 
-  document.getElementById("content").innerHTML = `
+  const articles =
+    searchResults.articles || [];
 
-    <div class="searchResultCount">
-      ${s.length} Verkäufe · ${a.length} Artikel gefunden
+  document.getElementById(
+    "content"
+  ).innerHTML = `
+
+    <div class="searchResultCount"
+         style="color:#8e8e93;font-size:11px;margin:2px 2px 10px">
+
+      ${sales.length}
+      Verkäufe/Rechnungen
+      ·
+      ${articles.length}
+      Einkäufe/Artikel
+
     </div>
 
+
     ${
-      s.length
-      ? `
+      sales.length
+      ?
+      `
         <div class="section">
+
           <div class="sectionHeader">
-            <div class="sectionTitle">Verkäufe / Rechnungen</div>
+            <div class="sectionTitle">
+              Verkäufe / Rechnungen
+            </div>
           </div>
 
           <div class="card">
-            ${s.map(renderSaleRow).join("")}
+            ${sales
+              .map(renderSaleRow)
+              .join("")}
           </div>
+
         </div>
       `
-      : ""
+      :
+      ""
     }
 
+
     ${
-      a.length
-      ? `
+      articles.length
+      ?
+      `
         <div class="section">
+
           <div class="sectionHeader">
-            <div class="sectionTitle">Lager / Einkäufe</div>
+            <div class="sectionTitle">
+              Einkäufe / Lager
+            </div>
           </div>
 
           <div class="card">
-            ${a.map(renderPurchaseRow).join("")}
+            ${articles
+              .map(renderPurchaseRow)
+              .join("")}
+          </div>
+
+        </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
+      !sales.length &&
+      !articles.length
+      ?
+      `
+        <div class="card">
+          <div class="empty">
+            Keine passenden Daten gefunden.
+            <br><br>
+            Du kannst nach Käufer,
+            Stadt, PLZ, Straße,
+            Artikel, Größe,
+            Artikelnummer,
+            Einkaufsort,
+            Kaufdatum,
+            Rechnungsnummer,
+            Plattform oder Preis suchen.
           </div>
         </div>
       `
-      : ""
-    }
-
-    ${
-      !s.length && !a.length
-      ? `<div class="card"><div class="empty">
-          Keine passenden Daten gefunden.
-        </div></div>`
-      : ""
+      :
+      ""
     }
   `;
 }
+
 
 /* =========================================================
    EINKAUFSORT DETAIL
@@ -1874,183 +3339,451 @@ function renderSearch(){
 
 function showPurchaseSource(source){
 
-  const articles = data.artikel.filter(a =>
-    normalizeSource(a.ort) === source
-  );
+  const articles =
+    data.artikel.filter(
+      a =>
+        normalizeSource(a.ort) ===
+        source
+    );
 
-  const total = articles.reduce(
-    (sum,a) =>
-      sum +
-      number(a.menge) *
-      number(a.preis),
-    0
-  );
+  const total =
+    articles.reduce(
+      (sum,a)=>
+        sum +
+        number(a.menge) *
+        number(a.preis),
+      0
+    );
 
-  document.getElementById("detailContent").innerHTML = `
+  document.getElementById(
+    "detailContent"
+  ).innerHTML = `
 
     <div class="modalTitle">
       ${escapeHTML(source)}
     </div>
 
+
     <div class="infoBox">
-      ${articles.length} Positionen<br>
+
+      ${articles.length}
+      Positionen
+
+      <br>
+
       Warenwert EK:
-      <b>${formatEuro(total)}</b>
+      <b>
+        ${formatEuro(total)}
+      </b>
+
     </div>
+
 
     ${
       articles.length
-      ? articles.map(a => `
+      ?
+      articles.map(a=>{
 
-        <div class="row">
+        const documentSource =
+          getDocumentSource(
+            a,
+            "purchase"
+          );
 
-          <div class="rowTop">
+        return `
 
-            <div>
-              <div class="rowTitle">
-                ${escapeHTML(a.name || "—")}
+          <div class="row">
+
+            <div class="rowTop">
+
+              <div>
+
+                <div class="rowTitle">
+                  ${escapeHTML(
+                    a.name ||
+                    "—"
+                  )}
+                </div>
+
+                <div class="rowSub">
+
+                  Art.-Nr.
+                  ${escapeHTML(
+                    a.artnr ||
+                    "—"
+                  )}
+
+                  · Größe
+                  ${escapeHTML(
+                    a.groesse ||
+                    a.size ||
+                    "—"
+                  )}
+
+                  <br>
+
+                  Kaufdatum:
+                  ${formatDate(
+                    a.datum ||
+                    a.kaufdatum
+                  )}
+
+                </div>
+
               </div>
 
-              <div class="rowSub">
-                Art.-Nr. ${escapeHTML(a.artnr || "—")}
-                · Größe ${escapeHTML(a.groesse || "—")}
+
+              <div class="rowValue">
+
+                ${formatEuro(
+                  number(a.preis)
+                )}
+
                 <br>
-                Kaufdatum:
-                ${formatDate(a.datum || a.kaufdatum)}
+
+                ${number(a.menge)}
+                Stück
+
               </div>
+
             </div>
 
-            <div class="rowValue">
-              ${formatEuro(number(a.preis))}
-              <br>
-              ${number(a.menge)} Stück
+
+            <div class="actions">
+
+              <button
+                class="smallButton"
+                onclick='showArticle(${JSON.stringify(
+                  a.id ||
+                  a.artnr ||
+                  ""
+                )})'>
+
+                Details
+
+              </button>
+
+
+              ${
+                documentSource
+                ?
+                `
+                  <button
+                    class="smallButton greenButton"
+                    onclick='openDocument(
+                      ${JSON.stringify(
+                        documentSource
+                      )},
+                      ${JSON.stringify(
+                        getDocumentName(
+                          a,
+                          "purchase"
+                        )
+                      )}
+                    )'>
+
+                    Rechnung / Beleg
+
+                  </button>
+                `
+                :
+                ""
+              }
+
             </div>
 
           </div>
+        `;
 
-          <div class="actions">
-
-            <button class="smallBtn"
-              onclick='findSalesForArticle(${JSON.stringify(a.artnr || "")})'>
-              Zugehörige Verkäufe
-            </button>
-
-          </div>
-
+      }).join("")
+      :
+      `
+        <div class="empty">
+          Keine Artikel gefunden.
         </div>
-
-      `).join("")
-      : `<div class="empty">Keine Artikel gefunden.</div>`
+      `
     }
 
   `;
 
-  document.getElementById("detailModal")
-    .classList.add("show");
+  document.getElementById(
+    "detailModal"
+  ).classList.add("show");
 }
 
+
 /* =========================================================
-   ARTIKEL DETAIL
+   ARTIKELDETAIL
 ========================================================= */
 
 function findArticle(id){
 
-  return data.artikel.find(a =>
-    String(a.id) === String(id) ||
-    String(a.artnr) === String(id)
+  return data.artikel.find(
+    a =>
+      String(a.id) ===
+        String(id)
+      ||
+      String(a.artnr) ===
+        String(id)
   );
 }
 
+
 function showArticle(id){
 
-  const a = findArticle(id);
+  const article =
+    findArticle(id);
 
-  if(!a) return;
+  if(!article){
+    return;
+  }
 
-  const qty = number(a.menge);
-  const price = number(a.preis);
-  const total = qty * price;
+  const qty =
+    number(article.menge);
 
-  const sales = data.sales.filter(s =>
-    clean(s.artnr) === clean(a.artnr)
-  );
+  const price =
+    number(article.preis);
 
-  const revenue = sales
-    .filter(s => !isStorno(s))
-    .reduce((sum,s) => sum + saleRevenue(s),0);
+  const total =
+    qty * price;
 
-  document.getElementById("detailContent").innerHTML = `
+  const sales =
+    data.sales.filter(
+      s =>
+        clean(s.artnr) ===
+        clean(article.artnr)
+    );
+
+  const documentSource =
+    getDocumentSource(
+      article,
+      "purchase"
+    );
+
+  document.getElementById(
+    "detailContent"
+  ).innerHTML = `
 
     <div class="modalTitle">
-      ${escapeHTML(a.name || "Artikel")}
+
+      ${escapeHTML(
+        article.name ||
+        "Artikel"
+      )}
+
     </div>
+
 
     <div class="infoBox">
 
       Artikelnummer:
-      <b>${escapeHTML(a.artnr || "—")}</b><br>
+      <b>
+        ${escapeHTML(
+          article.artnr ||
+          "—"
+        )}
+      </b>
+
+      <br>
 
       Größe:
-      <b>${escapeHTML(a.groesse || "—")}</b><br>
+      <b>
+        ${escapeHTML(
+          article.groesse ||
+          article.size ||
+          "—"
+        )}
+      </b>
+
+      <br>
 
       Zustand:
-      <b>${escapeHTML(a.zustand || "—")}</b><br>
+      <b>
+        ${escapeHTML(
+          article.zustand ||
+          "—"
+        )}
+      </b>
+
+      <br>
 
       Einkaufsort:
-      <b>${escapeHTML(normalizeSource(a.ort))}</b><br>
+      <b>
+        ${escapeHTML(
+          normalizeSource(
+            article.ort
+          )
+        )}
+      </b>
+
+      <br>
 
       Kaufdatum:
-      <b>${formatDate(a.datum || a.kaufdatum)}</b><br>
+      <b>
+        ${formatDate(
+          article.datum ||
+          article.kaufdatum
+        )}
+      </b>
+
+      <br>
 
       Menge:
-      <b>${qty}</b><br>
+      <b>
+        ${qty}
+      </b>
+
+      <br>
 
       Einkaufspreis/Stück:
-      <b>${formatEuro(price)}</b><br>
+      <b>
+        ${formatEuro(price)}
+      </b>
+
+      <br>
 
       Gesamt-Einkauf:
-      <b>${formatEuro(total)}</b>
+      <b>
+        ${formatEuro(total)}
+      </b>
 
     </div>
 
+
     ${
-      a.notiz
-      ? `
-        <div class="infoBox">
-          <b>Notiz</b><br>
-          ${escapeHTML(a.notiz)}
+      documentSource
+      ?
+      `
+        <div class="actions">
+
+          <button
+            class="smallButton greenButton"
+            onclick='openDocument(
+              ${JSON.stringify(
+                documentSource
+              )},
+              ${JSON.stringify(
+                getDocumentName(
+                  article,
+                  "purchase"
+                )
+              )}
+            )'>
+
+            Rechnung / Beleg öffnen
+
+          </button>
+
         </div>
       `
-      : ""
+      :
+      `
+        <div class="infoBox">
+
+          Für diesen Einkauf ist in den
+          importierten Daten kein Beleg hinterlegt.
+
+        </div>
+      `
     }
+
+
+    ${
+      article.notiz
+      ?
+      `
+        <div class="infoBox">
+
+          <b>Notiz</b>
+
+          <br>
+
+          ${escapeHTML(
+            article.notiz
+          )}
+
+        </div>
+      `
+      :
+      ""
+    }
+
 
     <div class="sectionTitle">
       Zugehörige Verkäufe
     </div>
 
-    <div class="card" style="margin-top:8px">
+
+    <div
+      class="card"
+      style="margin-top:8px">
 
       ${
         sales.length
-        ? sales.map(renderSaleRow).join("")
-        : `<div class="empty">
-             Noch kein Verkauf zu diesem Artikel gefunden.
-           </div>`
+        ?
+        sales
+          .map(renderSaleRow)
+          .join("")
+        :
+        `
+          <div class="empty">
+            Noch kein Verkauf zu diesem Artikel gefunden.
+          </div>
+        `
       }
 
     </div>
 
+
     <div class="modalActions">
-      <button class="secondary"
-        onclick='copyPurchaseData(${JSON.stringify(a.id || a.artnr || "")})'>
+
+      ${
+        documentSource
+        ?
+        `
+          <button
+            class="secondary"
+            onclick='openDocument(
+              ${JSON.stringify(
+                documentSource
+              )},
+              ${JSON.stringify(
+                getDocumentName(
+                  article,
+                  "purchase"
+                )
+              )}
+            )'>
+
+            Rechnung / Beleg
+
+          </button>
+        `
+        :
+        ""
+      }
+
+      <button
+        class="secondary"
+        onclick='copyPurchaseData(${JSON.stringify(
+          article.id ||
+          article.artnr ||
+          ""
+        )})'>
+
         Einkaufsdaten kopieren
+
       </button>
+
     </div>
+
   `;
 
-  document.getElementById("detailModal")
-    .classList.add("show");
+  document.getElementById(
+    "detailModal"
+  ).classList.add("show");
 }
+
 
 /* =========================================================
    VERKAUF DETAIL
@@ -2058,140 +3791,616 @@ function showArticle(id){
 
 function showSale(id){
 
-  const s = data.sales.find(x =>
-    String(x.id) === String(id)
-  );
+  const sale =
+    data.sales.find(
+      s =>
+        String(s.id) ===
+        String(id)
+    );
 
-  if(!s) return;
+  if(!sale){
+    return;
+  }
 
-  const address = addressParts(s);
+  const address =
+    addressParts(s);
 
-  document.getElementById("detailContent").innerHTML = `
+  const invoice =
+    getDocumentSource(
+      sale,
+      "sale"
+    );
+
+  document.getElementById(
+    "detailContent"
+  ).innerHTML = `
 
     <div class="modalTitle">
-      Rechnung ${escapeHTML(s.invoiceNr || "—")}
+
+      Rechnung
+      ${escapeHTML(
+        sale.invoiceNr ||
+        sale.rechnungsnummer ||
+        "—"
+      )}
+
     </div>
+
 
     <div class="infoBox">
 
-      <b>Verkauf</b><br>
+      <b>Verkauf</b>
+
+      <br>
 
       Artikel:
-      ${escapeHTML(s.name || "—")}<br>
+      ${escapeHTML(
+        sale.name ||
+        "—"
+      )}
+
+      <br>
 
       Artikelnummer:
-      ${escapeHTML(s.artnr || "—")}<br>
+      ${escapeHTML(
+        sale.artnr ||
+        "—"
+      )}
+
+      <br>
 
       Größe:
-      ${escapeHTML(s.groesse || s.size || "—")}<br>
+      ${escapeHTML(
+        sale.groesse ||
+        sale.size ||
+        "—"
+      )}
+
+      <br>
 
       Plattform:
-      ${escapeHTML(normalizePlatform(s.platform))}<br>
+      ${escapeHTML(
+        normalizePlatform(
+          sale.platform
+        )
+      )}
+
+      <br>
 
       Verkaufsdatum:
-      ${formatDate(s.date)}<br>
+      ${formatDate(
+        sale.date ||
+        sale.verkaufsdatum
+      )}
+
+      <br>
 
       Menge:
-      ${number(s.qty)}<br>
+      ${number(
+        sale.qty
+      )}
+
+      <br>
 
       Verkaufspreis:
-      ${formatEuro(s.total)}<br>
+      ${formatEuro(
+        sale.total
+      )}
+
+      <br>
 
       Einkaufskosten:
-      ${formatEuro(saleCost(s))}<br>
+      ${formatEuro(
+        saleCost(sale)
+      )}
+
+      <br>
 
       Versand:
-      ${formatEuro(s.shipping)}<br>
+      ${formatEuro(
+        sale.shipping
+      )}
+
+      <br>
 
       Gebühren:
-      ${formatEuro(s.fees)}<br>
+      ${formatEuro(
+        sale.fees
+      )}
+
+      <br>
 
       Gewinn:
-      <span class="${saleProfit(s) >= 0 ? "green":"red"}">
-        ${formatEuro(saleProfit(s))}
+
+      <span class="${
+        saleProfit(sale) >= 0
+        ? "green"
+        : "red"
+      }">
+
+        ${formatEuro(
+          saleProfit(sale)
+        )}
+
       </span>
 
     </div>
 
+
     <div class="infoBox">
 
-      <b>Käufer</b><br>
+      <b>Käufer</b>
+
+      <br>
 
       Name:
-      ${escapeHTML(buyerName(s) || "—")}<br>
+      ${escapeHTML(
+        buyerName(sale) ||
+        "—"
+      )}
+
+      <br>
 
       Straße:
-      ${escapeHTML(address.street || "—")}<br>
+      ${escapeHTML(
+        address.street ||
+        "—"
+      )}
+
+      <br>
 
       PLZ:
-      ${escapeHTML(buyerZip(s) || "—")}<br>
+      ${escapeHTML(
+        buyerZip(sale) ||
+        "—"
+      )}
+
+      <br>
 
       Stadt:
-      ${escapeHTML(buyerCity(s) || "—")}<br>
+      ${escapeHTML(
+        buyerCity(sale) ||
+        "—"
+      )}
+
+      <br>
 
       Land:
-      ${escapeHTML(address.country || "—")}
+      ${escapeHTML(
+        address.country ||
+        "—"
+      )}
 
     </div>
 
+
     ${
-      s.invoiceImg
-      ? `
+      invoice
+      ?
+      `
         <div class="actions">
-          <button class="smallBtn"
-            onclick='openInvoiceImage(${JSON.stringify(s.invoiceImg)})'>
-            Rechnung/Beleg öffnen
+
+          <button
+            class="smallButton greenButton"
+            onclick='openDocument(
+              ${JSON.stringify(
+                invoice
+              )},
+              ${JSON.stringify(
+                getDocumentName(
+                  sale,
+                  "sale"
+                )
+              )}
+            )'>
+
+            Meine Verkaufsrechnung öffnen
+
           </button>
+
         </div>
       `
-      : `
+      :
+      `
         <div class="infoBox">
-          Für diesen Verkauf ist kein Rechnungsbild hinterlegt.
+
+          Für diesen Verkauf ist in den
+          importierten Daten keine geschriebene
+          Rechnung bzw. kein Rechnungsbild hinterlegt.
+
         </div>
       `
     }
 
+
     <div class="modalActions">
 
-      <button class="secondary"
-        onclick='copySale(${JSON.stringify(s.id)})'>
+      ${
+        invoice
+        ?
+        `
+          <button
+            class="secondary"
+            onclick='openDocument(
+              ${JSON.stringify(
+                invoice
+              )},
+              ${JSON.stringify(
+                getDocumentName(
+                  sale,
+                  "sale"
+                )
+              )}
+            )'>
+
+            Rechnung
+
+          </button>
+        `
+        :
+        ""
+      }
+
+      <button
+        class="secondary"
+        onclick='copySale(${JSON.stringify(
+          sale.id
+        )})'>
+
         Daten kopieren
+
       </button>
 
     </div>
+
   `;
 
-  document.getElementById("detailModal")
-    .classList.add("show");
+  document.getElementById(
+    "detailModal"
+  ).classList.add("show");
 }
 
-function closeDetail(){
-  document.getElementById("detailModal")
-    .classList.remove("show");
-}
 
 /* =========================================================
-   SUCHFUNKTIONEN
+   DETAIL ZURÜCK
 ========================================================= */
 
-function searchText(text){
+function closeDetail(){
 
-  const input = document.getElementById("globalSearch");
+  document.getElementById(
+    "detailModal"
+  ).classList.remove("show");
 
-  input.value = text;
-
-  runSearch();
 }
 
-function findSalesForArticle(artnr){
 
-  if(!artnr){
-    alert("Keine Artikelnummer vorhanden.");
+/* =========================================================
+   BELEG ÖFFNEN
+========================================================= */
+
+function openDocument(source,title){
+
+  if(!source){
     return;
   }
 
-  searchText(artnr);
+  currentDocument = {
+    source,
+    title:
+      title ||
+      "Rechnung / Beleg"
+  };
+
+  document.getElementById(
+    "viewerTitle"
+  ).textContent =
+    currentDocument.title;
+
+  const content =
+    document.getElementById(
+      "viewerContent"
+    );
+
+  content.innerHTML = "";
+
+  /*
+    Data-URLs und normale Bilddateien
+  */
+
+  if(
+    source.startsWith(
+      "data:image/"
+    )
+    ||
+    /\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i
+      .test(source)
+  ){
+
+    const img =
+      document.createElement("img");
+
+    img.src = source;
+
+    img.alt =
+      currentDocument.title;
+
+    content.appendChild(img);
+
+  }
+
+  /*
+    PDF
+  */
+
+  else if(
+    source.startsWith(
+      "data:application/pdf"
+    )
+    ||
+    /\.pdf(\?.*)?$/i.test(source)
+  ){
+
+    const iframe =
+      document.createElement(
+        "iframe"
+      );
+
+    iframe.src = source;
+
+    content.appendChild(
+      iframe
+    );
+
+  }
+
+  /*
+    Sonstige Datei
+  */
+
+  else{
+
+    content.innerHTML = `
+
+      <div
+        style="
+          text-align:center;
+          color:#8e8e93;
+          font-size:14px;
+          line-height:22px;
+        ">
+
+        <div style="
+          font-size:40px;
+          margin-bottom:12px;
+        ">
+          📄
+        </div>
+
+        Der Beleg kann direkt
+        heruntergeladen werden.
+
+        <br><br>
+
+        <button
+          class="smallButton greenButton"
+          onclick="downloadCurrentDocument()">
+
+          Datei herunterladen
+
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+  document.getElementById(
+    "viewer"
+  ).classList.add("show");
+
 }
+
+
+function closeViewer(){
+
+  document.getElementById(
+    "viewer"
+  ).classList.remove("show");
+
+  document.getElementById(
+    "viewerContent"
+  ).innerHTML = "";
+
+  currentDocument = null;
+
+}
+
+
+/* =========================================================
+   BELEG DOWNLOAD
+========================================================= */
+
+function downloadCurrentDocument(){
+
+  if(!currentDocument){
+    return;
+  }
+
+  const source =
+    currentDocument.source;
+
+  const filename =
+    makeSafeFilename(
+      currentDocument.title ||
+      "Beleg"
+    );
+
+  /*
+    Data-URL
+  */
+
+  if(
+    source.startsWith("data:")
+  ){
+
+    const parts =
+      source.split(",");
+
+    const meta =
+      parts[0];
+
+    const body =
+      parts.slice(1).join(",");
+
+    const mime =
+      (
+        meta.match(
+          /data:([^;]+)/i
+        ) || []
+      )[1]
+      ||
+      "application/octet-stream";
+
+    let blob;
+
+    if(
+      meta.includes(";base64")
+    ){
+
+      const binary =
+        atob(body);
+
+      const bytes =
+        new Uint8Array(
+          binary.length
+        );
+
+      for(
+        let i=0;
+        i<binary.length;
+        i++
+      ){
+
+        bytes[i] =
+          binary.charCodeAt(i);
+
+      }
+
+      blob =
+        new Blob(
+          [bytes],
+          {type:mime}
+        );
+
+    }
+    else{
+
+      blob =
+        new Blob(
+          [decodeURIComponent(body)],
+          {type:mime}
+        );
+
+    }
+
+    downloadBlob(
+      blob,
+      filename +
+      extensionFromMime(mime)
+    );
+
+    return;
+  }
+
+  /*
+    Normale URL
+  */
+
+  const link =
+    document.createElement("a");
+
+  link.href = source;
+  link.download =
+    filename;
+
+  link.target = "_blank";
+  link.rel = "noopener";
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  link.remove();
+
+}
+
+
+function downloadBlob(blob,filename){
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  link.remove();
+
+  setTimeout(
+    () =>
+      URL.revokeObjectURL(url),
+    1000
+  );
+
+}
+
+
+function extensionFromMime(mime){
+
+  if(
+    mime === "application/pdf"
+  ){
+    return ".pdf";
+  }
+
+  if(
+    mime === "image/jpeg"
+  ){
+    return ".jpg";
+  }
+
+  if(
+    mime === "image/png"
+  ){
+    return ".png";
+  }
+
+  if(
+    mime === "image/webp"
+  ){
+    return ".webp";
+  }
+
+  return "";
+}
+
+
+function makeSafeFilename(name){
+
+  return clean(name)
+    .replace(/[\\/:*?"<>|]/g,"_")
+    .replace(/\s+/g," ")
+    .trim();
+
+}
+
 
 /* =========================================================
    KOPIEREN
@@ -2199,137 +4408,273 @@ function findSalesForArticle(artnr){
 
 function copySale(id){
 
-  const s = data.sales.find(x =>
-    String(x.id) === String(id)
-  );
+  const sale =
+    data.sales.find(
+      s =>
+        String(s.id) ===
+        String(id)
+    );
 
-  if(!s) return;
+  if(!sale){
+    return;
+  }
 
-  const address = addressParts(s);
+  const address =
+    addressParts(sale);
 
   const text = [
-    `Rechnung: ${s.invoiceNr || ""}`,
-    `Käufer: ${buyerName(s)}`,
-    `Straße: ${address.street || ""}`,
-    `PLZ: ${buyerZip(s)}`,
-    `Stadt: ${buyerCity(s)}`,
-    `Artikel: ${s.name || ""}`,
-    `Artikelnummer: ${s.artnr || ""}`,
-    `Größe: ${s.groesse || s.size || ""}`,
-    `Plattform: ${normalizePlatform(s.platform)}`,
-    `Verkaufsdatum: ${formatDate(s.date)}`,
-    `Menge: ${number(s.qty)}`,
-    `Verkaufspreis: ${formatEuro(s.total)}`,
-    `Einkaufskosten: ${formatEuro(saleCost(s))}`,
-    `Versand: ${formatEuro(s.shipping)}`,
-    `Gebühren: ${formatEuro(s.fees)}`,
-    `Gewinn: ${formatEuro(saleProfit(s))}`
+
+    `Rechnung: ${
+      sale.invoiceNr ||
+      sale.rechnungsnummer ||
+      ""
+    }`,
+
+    `Käufer: ${
+      buyerName(sale)
+    }`,
+
+    `Straße: ${
+      address.street ||
+      ""
+    }`,
+
+    `PLZ: ${
+      buyerZip(sale)
+    }`,
+
+    `Stadt: ${
+      buyerCity(sale)
+    }`,
+
+    `Artikel: ${
+      sale.name ||
+      ""
+    }`,
+
+    `Artikelnummer: ${
+      sale.artnr ||
+      ""
+    }`,
+
+    `Größe: ${
+      sale.groesse ||
+      sale.size ||
+      ""
+    }`,
+
+    `Plattform: ${
+      normalizePlatform(
+        sale.platform
+      )
+    }`,
+
+    `Verkaufsdatum: ${
+      formatDate(
+        sale.date ||
+        sale.verkaufsdatum
+      )
+    }`,
+
+    `Menge: ${
+      number(sale.qty)
+    }`,
+
+    `Verkaufspreis: ${
+      formatEuro(
+        sale.total
+      )
+    }`,
+
+    `Einkaufskosten: ${
+      formatEuro(
+        saleCost(sale)
+      )
+    }`,
+
+    `Versand: ${
+      formatEuro(
+        sale.shipping
+      )
+    }`,
+
+    `Gebühren: ${
+      formatEuro(
+        sale.fees
+      )
+    }`,
+
+    `Gewinn: ${
+      formatEuro(
+        saleProfit(sale)
+      )
+    }`
+
   ].join("\n");
 
   copyText(text);
 }
+
 
 function copyPurchaseData(id){
 
-  const a = findArticle(id);
+  const article =
+    findArticle(id);
 
-  if(!a) return;
+  if(!article){
+    return;
+  }
 
-  const qty = number(a.menge);
-  const price = number(a.preis);
+  const qty =
+    number(article.menge);
+
+  const price =
+    number(article.preis);
 
   const text = [
-    `Artikel: ${a.name || ""}`,
-    `Artikelnummer: ${a.artnr || ""}`,
-    `Größe: ${a.groesse || ""}`,
-    `Zustand: ${a.zustand || ""}`,
-    `Einkaufsort: ${normalizeSource(a.ort)}`,
-    `Kaufdatum: ${formatDate(a.datum || a.kaufdatum)}`,
-    `Menge: ${qty}`,
-    `Einkaufspreis/Stück: ${formatEuro(price)}`,
-    `Gesamt: ${formatEuro(qty * price)}`,
-    `Notiz: ${a.notiz || ""}`
+
+    `Artikel: ${
+      article.name ||
+      ""
+    }`,
+
+    `Artikelnummer: ${
+      article.artnr ||
+      ""
+    }`,
+
+    `Größe: ${
+      article.groesse ||
+      article.size ||
+      ""
+    }`,
+
+    `Zustand: ${
+      article.zustand ||
+      ""
+    }`,
+
+    `Einkaufsort: ${
+      normalizeSource(
+        article.ort
+      )
+    }`,
+
+    `Kaufdatum: ${
+      formatDate(
+        article.datum ||
+        article.kaufdatum
+      )
+    }`,
+
+    `Menge: ${
+      qty
+    }`,
+
+    `Einkaufspreis/Stück: ${
+      formatEuro(price)
+    }`,
+
+    `Gesamt: ${
+      formatEuro(
+        qty * price
+      )
+    }`,
+
+    `Notiz: ${
+      article.notiz ||
+      article.note ||
+      ""
+    }`
+
   ].join("\n");
 
   copyText(text);
 }
 
+
 function copyText(text){
 
-  if(navigator.clipboard){
+  if(
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
 
-    navigator.clipboard.writeText(text)
-      .then(() => alert("Daten kopiert."))
-      .catch(() => fallbackCopy(text));
+    navigator.clipboard
+      .writeText(text)
+      .then(
+        () =>
+          alert(
+            "Daten kopiert."
+          )
+      )
+      .catch(
+        () =>
+          fallbackCopy(text)
+      );
 
-  }else{
+  }
+  else{
 
     fallbackCopy(text);
 
   }
 }
 
+
 function fallbackCopy(text){
 
-  const textarea = document.createElement("textarea");
+  const textarea =
+    document.createElement(
+      "textarea"
+    );
 
   textarea.value = text;
-  textarea.style.position = "fixed";
-  textarea.style.opacity = "0";
 
-  document.body.appendChild(textarea);
+  textarea.style.position =
+    "fixed";
+
+  textarea.style.opacity =
+    "0";
+
+  document.body.appendChild(
+    textarea
+  );
 
   textarea.select();
-  document.execCommand("copy");
+
+  document.execCommand(
+    "copy"
+  );
 
   textarea.remove();
 
-  alert("Daten kopiert.");
+  alert(
+    "Daten kopiert."
+  );
 }
 
+
 /* =========================================================
-   RECHNUNGSBILD
+   ARTIKEL VERKÄUFE SUCHEN
 ========================================================= */
 
-function openInvoiceImage(src){
+function findSalesForArticle(
+  artnr
+){
 
-  if(!src) return;
+  if(!artnr){
 
-  const win = window.open();
+    alert(
+      "Keine Artikelnummer vorhanden."
+    );
 
-  if(!win){
-    alert("Das Öffnen des Belegs wurde vom Browser blockiert.");
     return;
   }
 
-  win.document.write(`
-    <html>
-      <head>
-        <title>Rechnung</title>
-        <meta name="viewport"
-          content="width=device-width,initial-scale=1">
-        <style>
-          body{
-            margin:0;
-            background:#000;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            min-height:100vh;
-          }
-          img{
-            max-width:100%;
-            max-height:100vh;
-            object-fit:contain;
-          }
-        </style>
-      </head>
-      <body>
-        <img src="${escapeAttribute(src)}">
-      </body>
-    </html>
-  `);
+  searchText(artnr);
 }
+
 
 /* =========================================================
    HTML SICHERHEIT
@@ -2337,38 +4682,96 @@ function openInvoiceImage(src){
 
 function escapeHTML(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 }
 
-function escapeAttribute(value){
-
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/"/g,"&quot;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
-}
 
 /* =========================================================
-   MODAL AUSSEN KLICK
+   MODAL KLICK AUSSEN
 ========================================================= */
 
-document.querySelectorAll(".modalBack").forEach(modal => {
+document
+  .querySelectorAll(".modalBack")
+  .forEach(modal=>{
 
-  modal.addEventListener("click", e => {
+    modal.addEventListener(
+      "click",
+      event=>{
 
-    if(e.target === modal){
-      modal.classList.remove("show");
-    }
+        if(
+          event.target === modal
+        ){
+
+          modal.classList.remove(
+            "show"
+          );
+
+        }
+
+      }
+    );
 
   });
 
-});
+
+/* =========================================================
+   ESC / ZURÜCK
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(event.key !== "Escape"){
+      return;
+    }
+
+    const viewer =
+      document.getElementById(
+        "viewer"
+      );
+
+    if(
+      viewer.classList.contains(
+        "show"
+      )
+    ){
+
+      closeViewer();
+      return;
+    }
+
+    closeDetail();
+    closeImport();
+
+  }
+);
+
+
+/*
+  Auf iPhone verhindert die App,
+  dass ein geöffneter Beleg einen
+  separaten Browser-Verlauf erzeugt.
+
+  Dadurch funktioniert der Rückbutton
+  innerhalb der App zuverlässig.
+*/
+
+window.addEventListener(
+  "popstate",
+  ()=>{
+    closeViewer();
+    closeDetail();
+  }
+);
+
 </script>
 
 </body>
