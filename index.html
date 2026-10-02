@@ -56,7 +56,7 @@
             gap: 6px;
         }
 
-        .upload-btn-container, .export-btn-container {
+        .upload-btn-container {
             position: relative;
             overflow: hidden;
             display: inline-block;
@@ -66,7 +66,7 @@
             background-color: var(--accent-blue);
             color: white;
             border: none;
-            padding: 8px 10px;
+            padding: 8px 12px;
             border-radius: 10px;
             font-size: 12px;
             font-weight: 600;
@@ -74,17 +74,6 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: opacity 0.2s;
-        }
-
-        .btn.secondary {
-            background-color: var(--card-bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn:active {
-            opacity: 0.7;
         }
 
         .upload-btn-container input[type="file"] {
@@ -160,7 +149,6 @@
             color: var(--text-primary);
             font-size: 14px;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         .search-input:focus {
@@ -232,11 +220,6 @@
             flex-direction: column;
             gap: 6px;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .tx-card:active {
-            background-color: var(--card-bg-secondary);
         }
 
         .tx-header-row {
@@ -310,16 +293,10 @@
     <header>
         <h1>Analytics</h1>
         <div class="header-btns">
-            <div class="export-btn-container" style="display:none;">
-                <button class="btn secondary" id="exportBtn" onclick="exportJSON()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Export
-                </button>
-            </div>
             <div class="upload-btn-container">
                 <button class="btn">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Laden
+                    JSON Laden
                 </button>
                 <input type="file" id="jsonFileInput" accept=".json">
             </div>
@@ -333,7 +310,7 @@
             <span class="stat-value green large" id="totalProfit">0,00 €</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">Stückzahl</span>
+            <span class="stat-label">Stückzahl (Verkauft)</span>
             <span class="stat-value blue" id="totalCount">0</span>
         </div>
         <div class="stat-card">
@@ -381,7 +358,7 @@
     <!-- Aktuelles Lager: Marken & Größen -->
     <div class="section-title">Aktueller Lagerbestand (Marken & Größen)</div>
     <div class="list-box" id="inventoryList">
-        <div class="empty-state"><p>Keine aktiven Lagerartikel gefunden oder nur Verkaufsdaten.</p></div>
+        <div class="empty-state"><p>Keine aktiven Lagerartikel gefunden.</p></div>
     </div>
 
     <!-- Einkaufsquellen-Analyse -->
@@ -411,7 +388,7 @@
     <!-- Transactions Search & List -->
     <div class="section-title">Verlauf & Suche</div>
     <div class="search-container">
-        <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Marke, Plattform, Re-Nr, Artikel...">
+        <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Marke, Plattform, Titel...">
     </div>
     <div class="tx-list" id="txList">
         <div class="empty-state"><p>Bitte lade eine JSON-Datei, um den Verlauf zu sehen.</p></div>
@@ -428,7 +405,22 @@
             reader.onload = function(e) {
                 try {
                     const json = JSON.parse(e.target.result);
-                    rawData = Array.isArray(json) ? json : (json.sales || json.items || json.data || json.lager || []);
+                    // Verschiedene mögliche Arrays in Backup-Dateien abfangen
+                    if (Array.isArray(json)) {
+                        rawData = json;
+                    } else if (json.items && Array.isArray(json.items)) {
+                        rawData = json.items;
+                    } else if (json.sales && Array.isArray(json.sales)) {
+                        rawData = json.sales;
+                    } else if (json.data && Array.isArray(json.data)) {
+                        rawData = json.data;
+                    } else if (json.lager && Array.isArray(json.lager)) {
+                        rawData = json.lager;
+                    } else {
+                        // Objekt durchsuchen nach dem ersten Array
+                        const foundArrayKey = Object.keys(json).find(k => Array.isArray(json[k]));
+                        rawData = foundArrayKey ? json[k] : [];
+                    }
                     
                     processData();
                     alert(rawData.length + ' Datensätze erfolgreich eingelesen!');
@@ -462,8 +454,8 @@
         function findField(item, keywords) {
             const keys = Object.keys(item);
             for (let kw of keywords) {
-                const foundKey = keys.find(k => k.toLowerCase().includes(kw));
-                if (foundKey && item[foundKey] !== undefined && item[foundKey] !== '') {
+                const foundKey = keys.find(k => k.toLowerCase() === kw || k.toLowerCase().includes(kw));
+                if (foundKey && item[foundKey] !== undefined && item[foundKey] !== null && item[foundKey] !== '') {
                     return item[foundKey];
                 }
             }
@@ -471,28 +463,54 @@
         }
 
         function isItemSold(item) {
-            const status = findField(item, ['status', 'state', 'typ', 'type']).toString().toLowerCase();
-            const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag']));
-            const soldDate = findField(item, ['verkaufsdatum', 'solddate', 'sold']);
-            return status.includes('verkauf') || status.includes('sold') || rev > 0 || soldDate !== '';
+            // Prüfe Status / Typ ob verkauft
+            const status = findField(item, ['status', 'state', 'typ', 'type', 'kategorie', 'sold', 'verkauft']).toString().toLowerCase();
+            const soldDate = findField(item, ['verkaufsdatum', 'solddate', 'sold_date', 'soldat', 'datum_verkauf']);
+            const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag', 'salesprice', 'selling_price', 'erloes']));
+            
+            if (status.includes('verkauf') || status.includes('sold') || status.includes('archiv') || status.includes('completed')) {
+                return true;
+            }
+            if (soldDate !== '') return true;
+            // Wenn explizit ein Verkaufspreis > 0 vorliegt und KEIN Status auf "Lager" steht
+            if (rev > 0 && !status.includes('lager') && !status.includes('aktiv') && !status.includes('active')) {
+                return true;
+            }
+            return false;
         }
 
-        function calculateDaysInStock(item) {
-            const dateStr1 = findField(item, ['verkaufsdatum', 'solddate', 'datum', 'date']);
-            const dateStr2 = findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate']);
-            if (!dateStr1 || !dateStr2) return null;
-            const d1 = new Date(dateStr1);
-            const d2 = new Date(dateStr2);
-            if (isNaN(d1) || isNaN(d2)) return null;
-            return Math.ceil(Math.abs(d1 - d2) / (1000 * 60 * 60 * 24));
-        }
-
-        function calculateActiveDays(item) {
-            const createDateStr = findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate']);
-            if (!createDateStr) return null;
-            const dCreated = new Date(createDateStr);
-            if (isNaN(dCreated)) return null;
-            return Math.ceil(Math.abs(new Date() - dCreated) / (1000 * 60 * 60 * 24));
+        function getVal(item, type) {
+            if (type === 'cost') {
+                return parseNum(findField(item, ['einkaufspreis', 'ek', 'cost', 'einkauf', 'purchase_price', 'ek_preis', 'price_buy', 'ekreis']));
+            }
+            if (type === 'revenue') {
+                return parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag', 'salesprice', 'selling_price', 'erloes', 'vk_preis']));
+            }
+            if (type === 'brand') {
+                return (findField(item, ['marke', 'brand', 'hersteller', 'manufacturer', 'label']) || 'Unbekannt').trim();
+            }
+            if (type === 'size') {
+                return (findField(item, ['groesse', 'size', 'grosse', 'sz']) || 'Einheitsgröße').trim();
+            }
+            if (type === 'title') {
+                return (findField(item, ['name', 'artikel', 'titel', 'produkt', 'product', 'item', 'bezeichnung']) || '').trim();
+            }
+            if (type === 'source') {
+                return (findField(item, ['quelle', 'supplier', 'haendler', 'lieferant', 'shop', 'source', 'buyfrom']) || 'Unbekannt').trim();
+            }
+            if (type === 'platform') {
+                return (findField(item, ['plattform', 'kanal', 'platform', 'marketplace', 'verkauf über', 'channel']) || 'Unbekannt').trim();
+            }
+            if (type === 'invoice') {
+                return findField(item, ['rechnungsnummer', 'invoice', 'beleg', 'rechnung', 'receipt', 'invoice_no']);
+            }
+            if (type === 'createdDate') {
+                return findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate', 'date_added', 'datum', 'date']);
+            }
+            if (type === 'soldDate') {
+                return findField(item, ['verkaufsdatum', 'solddate', 'sold_date', 'datum_verkauf']);
+            }
+            return '';
         }
 
         function processData() {
@@ -512,23 +530,27 @@
             let invCost = 0;
             let stuckCapital = 0;
 
-            rawData.forEach((item, index) => {
-                const cost = parseNum(findField(item, ['einkaufspreis', 'ek', 'cost', 'einkauf']));
-                const brand = (findField(item, ['marke', 'brand', 'hersteller']) || 'Unbekannt').trim();
-                const size = (findField(item, ['groesse', 'size']) || 'Einheitsgröße').trim();
-                const title = findField(item, ['name', 'artikel', 'titel', 'produkt']) || 'Artikel #' + (index + 1);
-                const source = (findField(item, ['quelle', 'supplier', 'haendler', 'lieferant', 'shop']) || 'Unbekannt').trim();
-                const platform = (findField(item, ['plattform', 'kanal', 'platform', 'marketplace', 'verkauf über']) || 'Unbekannt').trim();
-                const invoice = findField(item, ['rechnungsnummer', 'invoice', 'beleg', 'rechnung']);
+            const now = new Date();
 
-                if (!sourcesMap[source]) sourcesMap[source] = { count: 0, spent: 0 };
-                sourcesMap[source].count += 1;
-                sourcesMap[source].spent += cost;
+            rawData.forEach((item, index) => {
+                const cost = getVal(item, 'cost');
+                const brand = getVal(item, 'brand');
+                const size = getVal(item, 'size');
+                const title = getVal(item, 'title') || 'Artikel #' + (index + 1);
+                const source = getVal(item, 'source');
+                const platform = getVal(item, 'platform');
+                const invoice = getVal(item, 'invoice');
+
+                if (source && source !== 'Unbekannt') {
+                    if (!sourcesMap[source]) sourcesMap[source] = { count: 0, spent: 0 };
+                    sourcesMap[source].count += 1;
+                    sourcesMap[source].spent += cost;
+                }
 
                 const sold = isItemSold(item);
 
                 if (sold) {
-                    const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag']));
+                    const rev = getVal(item, 'revenue');
                     totalRev += rev;
                     totalCostVal += cost;
                     salesCount += 1;
@@ -543,10 +565,10 @@
                     platformsMap[platform].revenue += rev;
                     platformsMap[platform].profit += (rev - cost);
 
-                    const soldDateStr = findField(item, ['verkaufsdatum', 'solddate', 'datum', 'date']);
+                    const soldDateStr = getVal(item, 'soldDate') || getVal(item, 'createdDate');
                     if (soldDateStr) {
                         const d = new Date(soldDateStr);
-                        if (!isNaN(d)) {
+                        if (!isNaN(d.getTime())) {
                             const monthKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
                             if (!monthlyMap[monthKey]) monthlyMap[monthKey] = { count: 0, revenue: 0, profit: 0 };
                             monthlyMap[monthKey].count += 1;
@@ -555,11 +577,18 @@
                         }
                     }
 
-                    const days = calculateDaysInStock(item);
-                    if (days !== null) {
-                        itemsWithAge.push({ title, brand, days, profit: rev - cost });
+                    const createDateStr = getVal(item, 'createdDate');
+                    const soldDateStr2 = getVal(item, 'soldDate');
+                    if (createDateStr && soldDateStr2) {
+                        const d1 = new Date(soldDateStr2);
+                        const d2 = new Date(createDateStr);
+                        if (!isNaN(d1) && !isNaN(d2)) {
+                            const days = Math.ceil(Math.abs(d1 - d2) / (1000 * 60 * 60 * 24));
+                            itemsWithAge.push({ title, brand, days, profit: rev - cost });
+                        }
                     }
                 } else {
+                    // Aktives Lager
                     invCount += 1;
                     invCost += cost;
 
@@ -567,19 +596,18 @@
                     inventoryMap[brand].count += 1;
                     inventoryMap[brand].cost += cost;
                     
-                    const activeDays = calculateActiveDays(item);
-                    inventoryMap[brand].items.push({ title, size, activeDays, cost });
-
-                    const createDateStr = findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate']);
+                    const createDateStr = getVal(item, 'createdDate');
+                    let activeDays = null;
                     if (createDateStr) {
                         const dCreated = new Date(createDateStr);
-                        if (!isNaN(dCreated)) {
-                            const currentDays = Math.ceil(Math.abs(new Date() - dCreated) / (1000 * 60 * 60 * 24));
-                            if (currentDays > 60) {
+                        if (!isNaN(dCreated.getTime())) {
+                            activeDays = Math.ceil(Math.abs(now - dCreated) / (1000 * 60 * 60 * 24));
+                            if (activeDays > 60) {
                                 stuckCapital += cost;
                             }
                         }
                     }
+                    inventoryMap[brand].items.push({ title, size, activeDays, cost });
                 }
 
                 if (cost > 0 && !invoice) {
@@ -691,8 +719,8 @@
                 let itemsDetailHtml = '';
                 brandObj.items.forEach(it => {
                     const daysText = it.activeDays !== null ? ` • ${it.activeDays} Tage im Lager` : '';
-                    const costText = it.cost > 0 ? ` (${formatCurrency(it.cost)})` : '';
-                    itemsDetailHtml += `<div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">• <strong>${it.title}</strong> (Größe: ${it.size})${costText}<span style="color:var(--accent-orange);">${daysText}</span></div>`;
+                    const costText = it.cost > 0 ? ` (EK: ${formatCurrency(it.cost)})` : '';
+                    itemsDetailHtml += `<div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">• <strong>${it.title || 'Artikel'}</strong> (Größe: ${it.size})${costText}<span style="color:var(--accent-orange);">${daysText}</span></div>`;
                 });
 
                 html += `
@@ -776,11 +804,11 @@
             }
 
             let html = '';
-            missingInvoices.slice(0, 10).forEach(item => {
+            missingInvoices.slice(0, 15).forEach(item => {
                 html += `
                     <div class="list-item">
                         <div class="item-info">
-                            <h4>${item.brand ? item.brand + ' – ' : ''}${item.title}</h4>
+                            <h4>${item.brand ? item.brand + ' – ' : ''}${item.title || 'Artikel'}</h4>
                             <p>EK: ${formatCurrency(item.cost)}</p>
                         </div>
                         <div class="item-stats">
@@ -806,7 +834,7 @@
                 html += `
                     <div class="list-item">
                         <div class="item-info">
-                            <h4>${item.brand ? item.brand + ' – ' : ''}${item.title}</h4>
+                            <h4>${item.brand ? item.brand + ' – ' : ''}${item.title || 'Artikel'}</h4>
                             <p>Gewinn: +${formatCurrency(item.profit)}</p>
                         </div>
                         <div class="item-stats">
@@ -841,12 +869,13 @@
 
             let html = '';
             filtered.forEach((item, index) => {
-                const title = findField(item, ['name', 'artikel', 'titel', 'produkt']) || 'Artikel #' + (index + 1);
-                const brand = findField(item, ['marke', 'brand', 'hersteller']);
-                const size = findField(item, ['groesse', 'size']);
-                const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag']));
-                const cost = parseNum(findField(item, ['einkaufspreis', 'ek', 'cost', 'einkauf']));
+                const title = getVal(item, 'title') || 'Artikel #' + (index + 1);
+                const brand = getVal(item, 'brand');
+                const size = getVal(item, 'size');
+                const rev = getVal(item, 'revenue');
+                const cost = getVal(item, 'cost');
                 const profit = rev - cost;
+                const sold = isItemSold(item);
                 
                 let detailsHtml = '';
                 for (const [key, val] of Object.entries(item)) {
@@ -859,15 +888,17 @@
                     <div class="tx-card" onclick="this.classList.toggle('expanded')">
                         <div class="tx-header-row">
                             <div class="tx-main">
-                                <h4>${brand ? brand + ' – ' : ''}${title}</h4>
+                                <h4>${brand && brand !== 'Unbekannt' ? brand + ' – ' : ''}${title}</h4>
                                 <div class="tx-sub">
-                                    ${size ? `<span>Größe: ${size}</span>` : ''}
+                                    ${size && size !== 'Einheitsgröße' ? `<span>Größe: ${size}</span>` : ''}
                                     <span>(Tippen für Details)</span>
                                 </div>
                             </div>
                             <div class="tx-right">
-                                <div class="tx-price">${rev > 0 ? formatCurrency(rev) : 'Im Lager'}</div>
-                                <div class="tx-profit">${rev > 0 ? '+' + formatCurrency(profit) : 'EK: ' + formatCurrency(cost)}</div>
+                                <div class="tx-price">${sold && rev > 0 ? formatCurrency(rev) : 'Im Lager'}</div>
+                                <div class="tx-profit" style="color: ${sold ? 'var(--accent-green)' : 'var(--text-secondary)'};">
+                                    ${sold ? 'Gewinn: +' + formatCurrency(profit) : 'EK: ' + formatCurrency(cost)}
+                                </div>
                             </div>
                         </div>
                         <div class="tx-details">
