@@ -310,7 +310,7 @@
     <header>
         <h1>Analytics</h1>
         <div class="header-btns">
-            <div class="export-btn-container">
+            <div class="export-btn-container" style="display:none;">
                 <button class="btn secondary" id="exportBtn" onclick="exportJSON()">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     Export
@@ -369,7 +369,7 @@
     <!-- Verkaufsplattformen-Auswertung -->
     <div class="section-title">Verkaufsplattformen (Umsatz & Gewinn)</div>
     <div class="list-box" id="platformsList">
-        <div class="empty-state"><p>Keine Angaben zu Plattformen/Verkaufskanälen gefunden.</p></div>
+        <div class="empty-state"><p>Bitte lade deine Lager-JSON-Datei.</p></div>
     </div>
 
     <!-- Monatsvergleich -->
@@ -413,22 +413,12 @@
     <div class="search-container">
         <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Marke, Plattform, Re-Nr, Artikel...">
     </div>
-    <div class="tx-list" id="txList"></div>
+    <div class="tx-list" id="txList">
+        <div class="empty-state"><p>Bitte lade eine JSON-Datei, um den Verlauf zu sehen.</p></div>
+    </div>
 
     <script>
         let rawData = [];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('analytics_raw_data');
-            if (saved) {
-                try {
-                    rawData = JSON.parse(saved);
-                    processData();
-                } catch (e) {
-                    console.error("Fehler beim Laden des Cache", e);
-                }
-            }
-        });
 
         document.getElementById('jsonFileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -440,8 +430,6 @@
                     const json = JSON.parse(e.target.result);
                     rawData = Array.isArray(json) ? json : (json.sales || json.items || json.data || json.lager || []);
                     
-                    localStorage.setItem('analytics_raw_data', JSON.stringify(rawData));
-                    
                     processData();
                     alert(rawData.length + ' Datensätze erfolgreich eingelesen!');
                 } catch (err) {
@@ -450,20 +438,6 @@
             };
             reader.readAsText(file);
         });
-
-        function exportJSON() {
-            if (!rawData || rawData.length === 0) {
-                alert('Keine Daten zum Exportieren vorhanden.');
-                return;
-            }
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "analytics_backup.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
 
         document.getElementById('searchInput').addEventListener('input', function() {
             renderTransactions(this.value);
@@ -714,7 +688,6 @@
 
             let html = '';
             sorted.forEach(brandObj => {
-                // Gruppiere Artikel nach Name, Größe und zeige Tage im Lager an
                 let itemsDetailHtml = '';
                 brandObj.items.forEach(it => {
                     const daysText = it.activeDays !== null ? ` • ${it.activeDays} Tage im Lager` : '';
@@ -724,7 +697,7 @@
 
                 html += `
                     <div class="list-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                        <div style="display: flex; justify-content: space-width; width: 100%; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                             <div class="item-info">
                                 <h4>${brandObj.name}</h4>
                             </div>
@@ -849,6 +822,11 @@
         function renderTransactions(filter = '') {
             const txListEl = document.getElementById('txList');
             const query = filter.toLowerCase().trim();
+
+            if (!rawData || rawData.length === 0) {
+                txListEl.innerHTML = `<div class="empty-state"><p>Bitte lade eine JSON-Datei, um den Verlauf zu sehen.</p></div>`;
+                return;
+            }
 
             const filtered = rawData.filter(item => {
                 if (!query) return true;
