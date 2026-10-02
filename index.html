@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sales & Inventory Analytics</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --card-bg-secondary: #2c2c2e;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --accent-green: #30d158;
+            --accent-blue: #0a84ff;
+            --accent-orange: #ff9f0a;
+            --accent-red: #ff453a;
+            --border-color: #38383a;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: calc(var(--safe-top) + 12px) 12px calc(var(--safe-bottom) + 24px) 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .header-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .upload-btn-container, .export-btn-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: opacity 0.2s;
+        }
+
+        .btn.secondary {
+            background-color: var(--card-bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:active {
+            opacity: 0.7;
+        }
+
+        .upload-btn-container input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .stat-card.span-2 { grid-column: span 2; }
+        .stat-card.span-3 { grid-column: span 3; }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        .stat-value.large { font-size: 20px; }
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.blue { color: var(--accent-blue); }
+        .stat-value.orange { color: var(--accent-orange); }
+        .stat-value.red { color: var(--accent-red); }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 20px 0 8px 4px;
+            letter-spacing: -0.2px;
+        }
+
+        /* Search & Filter */
+        .search-container {
+            margin-bottom: 12px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        /* List Boxes */
+        .list-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 20px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .list-item:last-child { border-bottom: none; }
+
+        .item-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+
+        .item-info p {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .item-stats {
+            text-align: right;
+        }
+
+        .item-main-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .item-main-val.red { color: var(--accent-red); }
+        .item-main-val.orange { color: var(--accent-orange); }
+        .item-main-val.blue { color: var(--accent-blue); }
+
+        .item-sub-val {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Transactions Feed */
+        .tx-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tx-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .tx-card:active {
+            background-color: var(--card-bg-secondary);
+        }
+
+        .tx-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .tx-main h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .tx-sub {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tx-right {
+            text-align: right;
+        }
+
+        .tx-price {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .tx-profit {
+            font-size: 11px;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .tx-details {
+            display: none;
+            margin-top: 6px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-secondary);
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+        }
+
+        .tx-card.expanded .tx-details {
+            display: grid;
+        }
+
+        .detail-item span {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 25px 16px;
+            color: var(--text-secondary);
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Analytics</h1>
+        <div class="header-btns">
+            <div class="export-btn-container">
+                <button class="btn secondary" id="exportBtn" onclick="exportJSON()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export
+                </button>
+            </div>
+            <div class="upload-btn-container">
+                <button class="btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Laden
+                </button>
+                <input type="file" id="jsonFileInput" accept=".json">
+            </div>
+        </div>
+    </header>
+
+    <!-- KPI Dashboard -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card span-2">
+            <span class="stat-label">Nettogewinn Gesamt</span>
+            <span class="stat-value green large" id="totalProfit">0,00 €</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Stückzahl</span>
+            <span class="stat-value blue" id="totalCount">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Gesamtumsatz</span>
+            <span class="stat-value" id="totalRevenue">0,00 €</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Einkaufskosten</span>
+            <span class="stat-value" id="totalCost">0,00 €</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Ø Marge</span>
+            <span class="stat-value green" id="avgMargin">0 %</span>
+        </div>
+        <div class="stat-card span-3">
+            <span class="stat-label">Ø Gewinn pro Artikel</span>
+            <span class="stat-value orange" id="avgProfitPerItem">0,00 €</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Aktives Lager</span>
+            <span class="stat-value blue" id="inventoryCount">0 Stk.</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Lager-Wert (EK)</span>
+            <span class="stat-value" id="inventoryCost">0,00 €</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Ladenhüter (>60d)</span>
+            <span class="stat-value red" id="stuckCapitalValue">0,00 €</span>
+        </div>
+    </div>
+
+    <!-- Verkaufsplattformen-Auswertung -->
+    <div class="section-title">Verkaufsplattformen (Umsatz & Gewinn)</div>
+    <div class="list-box" id="platformsList">
+        <div class="empty-state"><p>Keine Angaben zu Plattformen/Verkaufskanälen gefunden.</p></div>
+    </div>
+
+    <!-- Monatsvergleich -->
+    <div class="section-title">Monatsvergleich (Umsatz & Gewinn)</div>
+    <div class="list-box" id="monthlyList">
+        <div class="empty-state"><p>Keine Verkaufsdaten mit Datum gefunden.</p></div>
+    </div>
+
+    <!-- Aktuelles Lager: Marken & Größen -->
+    <div class="section-title">Aktueller Lagerbestand (Marken & Größen)</div>
+    <div class="list-box" id="inventoryList">
+        <div class="empty-state"><p>Keine aktiven Lagerartikel gefunden oder nur Verkaufsdaten.</p></div>
+    </div>
+
+    <!-- Einkaufsquellen-Analyse -->
+    <div class="section-title">Top Einkaufsquellen (Wo am meisten ausgegeben?)</div>
+    <div class="list-box" id="sourcesList">
+        <div class="empty-state"><p>Keine Angaben zu Lieferanten/Quellen gefunden.</p></div>
+    </div>
+
+    <!-- Top Marken nach Gewinn -->
+    <div class="section-title">Top Marken (Verkaufsanalyse)</div>
+    <div class="list-box" id="brandsList">
+        <div class="empty-state"><p>Noch keine Verkaufsdaten geladen.</p></div>
+    </div>
+
+    <!-- Fehlende Rechnungen Check -->
+    <div class="section-title">Achtung: Fehlende Rechnungsnummer / Belege</div>
+    <div class="list-box" id="missingInvoicesList">
+        <div class="empty-state"><p>Top! Bei allen Artikeln mit Einkaufspreis ist eine Rechnungsnummer vorhanden.</p></div>
+    </div>
+
+    <!-- Längste Standzeiten -->
+    <div class="section-title">Längste Standzeiten (Ladenhüter-Check)</div>
+    <div class="list-box" id="slowMoversList">
+        <div class="empty-state"><p>Keine Datums-Vergleiche für Standzeiten gefunden.</p></div>
+    </div>
+
+    <!-- Transactions Search & List -->
+    <div class="section-title">Verlauf & Suche</div>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Marke, Plattform, Re-Nr, Artikel...">
+    </div>
+    <div class="tx-list" id="txList"></div>
+
+    <script>
+        let rawData = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('analytics_raw_data');
+            if (saved) {
+                try {
+                    rawData = JSON.parse(saved);
+                    processData();
+                } catch (e) {
+                    console.error("Fehler beim Laden des Cache", e);
+                }
+            }
+        });
+
+        document.getElementById('jsonFileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    rawData = Array.isArray(json) ? json : (json.sales || json.items || json.data || json.lager || []);
+                    
+                    localStorage.setItem('analytics_raw_data', JSON.stringify(rawData));
+                    
+                    processData();
+                    alert(rawData.length + ' Datensätze erfolgreich eingelesen!');
+                } catch (err) {
+                    alert('Fehler beim Parsen der JSON-Datei: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function exportJSON() {
+            if (!rawData || rawData.length === 0) {
+                alert('Keine Daten zum Exportieren vorhanden.');
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rawData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "analytics_backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            renderTransactions(this.value);
+        });
+
+        function parseNum(val) {
+            if (typeof val === 'number') return val;
+            if (!val) return 0;
+            let clean = val.toString().replace(/[^\d.,-]/g, '');
+            if (clean.includes(',') && clean.includes('.')) {
+                clean = clean.replace(/\./g, '').replace(',', '.');
+            } else if (clean.includes(',')) {
+                clean = clean.replace(',', '.');
+            }
+            return parseFloat(clean) || 0;
+        }
+
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(val);
+        }
+
+        function findField(item, keywords) {
+            const keys = Object.keys(item);
+            for (let kw of keywords) {
+                const foundKey = keys.find(k => k.toLowerCase().includes(kw));
+                if (foundKey && item[foundKey] !== undefined && item[foundKey] !== '') {
+                    return item[foundKey];
+                }
+            }
+            return '';
+        }
+
+        function isItemSold(item) {
+            const status = findField(item, ['status', 'state', 'typ', 'type']).toString().toLowerCase();
+            const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag']));
+            const soldDate = findField(item, ['verkaufsdatum', 'solddate', 'sold']);
+            return status.includes('verkauf') || status.includes('sold') || rev > 0 || soldDate !== '';
+        }
+
+        function calculateDaysInStock(item) {
+            const dateStr1 = findField(item, ['verkaufsdatum', 'solddate', 'datum', 'date']);
+            const dateStr2 = findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate']);
+            if (!dateStr1 || !dateStr2) return null;
+            const d1 = new Date(dateStr1);
+            const d2 = new Date(dateStr2);
+            if (isNaN(d1) || isNaN(d2)) return null;
+            return Math.ceil(Math.abs(d1 - d2) / (1000 * 60 * 60 * 24));
+        }
+
+        function calculateActiveDays(item) {
+            const createDateStr = findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate']);
+            if (!createDateStr) return null;
+            const dCreated = new Date(createDateStr);
+            if (isNaN(dCreated)) return null;
+            return Math.ceil(Math.abs(new Date() - dCreated) / (1000 * 60 * 60 * 24));
+        }
+
+        function processData() {
+            if (!rawData || rawData.length === 0) return;
+
+            let totalRev = 0;
+            let totalCostVal = 0;
+            let salesCount = 0;
+            let brandMap = {};
+            let inventoryMap = {}; 
+            let sourcesMap = {}; 
+            let platformsMap = {}; 
+            let monthlyMap = {}; 
+            let itemsWithAge = [];
+            let missingInvoices = [];
+            let invCount = 0;
+            let invCost = 0;
+            let stuckCapital = 0;
+
+            rawData.forEach((item, index) => {
+                const cost = parseNum(findField(item, ['einkaufspreis', 'ek', 'cost', 'einkauf']));
+                const brand = (findField(item, ['marke', 'brand', 'hersteller']) || 'Unbekannt').trim();
+                const size = (findField(item, ['groesse', 'size']) || 'Einheitsgröße').trim();
+                const title = findField(item, ['name', 'artikel', 'titel', 'produkt']) || 'Artikel #' + (index + 1);
+                const source = (findField(item, ['quelle', 'supplier', 'haendler', 'lieferant', 'shop']) || 'Unbekannt').trim();
+                const platform = (findField(item, ['plattform', 'kanal', 'platform', 'marketplace', 'verkauf über']) || 'Unbekannt').trim();
+                const invoice = findField(item, ['rechnungsnummer', 'invoice', 'beleg', 'rechnung']);
+
+                if (!sourcesMap[source]) sourcesMap[source] = { count: 0, spent: 0 };
+                sourcesMap[source].count += 1;
+                sourcesMap[source].spent += cost;
+
+                const sold = isItemSold(item);
+
+                if (sold) {
+                    const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag']));
+                    totalRev += rev;
+                    totalCostVal += cost;
+                    salesCount += 1;
+
+                    if (!brandMap[brand]) brandMap[brand] = { count: 0, revenue: 0, profit: 0 };
+                    brandMap[brand].count += 1;
+                    brandMap[brand].revenue += rev;
+                    brandMap[brand].profit += (rev - cost);
+
+                    if (!platformsMap[platform]) platformsMap[platform] = { count: 0, revenue: 0, profit: 0 };
+                    platformsMap[platform].count += 1;
+                    platformsMap[platform].revenue += rev;
+                    platformsMap[platform].profit += (rev - cost);
+
+                    const soldDateStr = findField(item, ['verkaufsdatum', 'solddate', 'datum', 'date']);
+                    if (soldDateStr) {
+                        const d = new Date(soldDateStr);
+                        if (!isNaN(d)) {
+                            const monthKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                            if (!monthlyMap[monthKey]) monthlyMap[monthKey] = { count: 0, revenue: 0, profit: 0 };
+                            monthlyMap[monthKey].count += 1;
+                            monthlyMap[monthKey].revenue += rev;
+                            monthlyMap[monthKey].profit += (rev - cost);
+                        }
+                    }
+
+                    const days = calculateDaysInStock(item);
+                    if (days !== null) {
+                        itemsWithAge.push({ title, brand, days, profit: rev - cost });
+                    }
+                } else {
+                    invCount += 1;
+                    invCost += cost;
+
+                    if (!inventoryMap[brand]) inventoryMap[brand] = { count: 0, cost: 0, items: [] };
+                    inventoryMap[brand].count += 1;
+                    inventoryMap[brand].cost += cost;
+                    
+                    const activeDays = calculateActiveDays(item);
+                    inventoryMap[brand].items.push({ title, size, activeDays, cost });
+
+                    const createDateStr = findField(item, ['einstelldatum', 'kaufdatum', 'created', 'erstellt', 'startdate']);
+                    if (createDateStr) {
+                        const dCreated = new Date(createDateStr);
+                        if (!isNaN(dCreated)) {
+                            const currentDays = Math.ceil(Math.abs(new Date() - dCreated) / (1000 * 60 * 60 * 24));
+                            if (currentDays > 60) {
+                                stuckCapital += cost;
+                            }
+                        }
+                    }
+                }
+
+                if (cost > 0 && !invoice) {
+                    missingInvoices.push({ title, brand, cost, index: index + 1 });
+                }
+            });
+
+            const totalProfitVal = totalRev - totalCostVal;
+            const avgMarginVal = totalCostVal > 0 ? (totalProfitVal / totalCostVal) * 100 : 0;
+            const avgProfitItemVal = salesCount > 0 ? totalProfitVal / salesCount : 0;
+
+            document.getElementById('totalProfit').textContent = formatCurrency(totalProfitVal);
+            document.getElementById('totalRevenue').textContent = formatCurrency(totalRev);
+            document.getElementById('totalCost').textContent = formatCurrency(totalCostVal);
+            document.getElementById('totalCount').textContent = salesCount;
+            document.getElementById('avgMargin').textContent = avgMarginVal.toFixed(1) + ' %';
+            document.getElementById('avgProfitPerItem').textContent = formatCurrency(avgProfitItemVal);
+            document.getElementById('inventoryCount').textContent = invCount + ' Stk.';
+            document.getElementById('inventoryCost').textContent = formatCurrency(invCost);
+            document.getElementById('stuckCapitalValue').textContent = formatCurrency(stuckCapital);
+
+            renderPlatforms(platformsMap);
+            renderMonthly(monthlyMap);
+            renderInventory(inventoryMap);
+            renderSources(sourcesMap);
+            renderBrands(brandMap);
+            renderMissingInvoices(missingInvoices);
+            renderSlowMovers(itemsWithAge);
+            renderTransactions();
+        }
+
+        function renderPlatforms(platformsMap) {
+            const el = document.getElementById('platformsList');
+            const sorted = Object.keys(platformsMap).map(p => ({ name: p, ...platformsMap[p] })).sort((a, b) => b.profit - a.profit);
+
+            if (sorted.length === 0 || (sorted.length === 1 && sorted[0].name === 'Unbekannt' && sorted[0].revenue === 0)) {
+                el.innerHTML = `<div class="empty-state"><p>Keine Plattformen in den Verkäufen gefunden.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            sorted.forEach(item => {
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.count} ${item.count === 1 ? 'Verkauf' : 'Verkäufe'}</p>
+                        </div>
+                        <div class="item-stats">
+                            <div class="item-main-val">+${formatCurrency(item.profit)}</div>
+                            <div class="item-sub-val">Umsatz: ${formatCurrency(item.revenue)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderMonthly(monthlyMap) {
+            const el = document.getElementById('monthlyList');
+            const sortedKeys = Object.keys(monthlyMap).sort().reverse();
+
+            if (sortedKeys.length === 0) {
+                el.innerHTML = `<div class="empty-state"><p>Keine Monatsdaten verfügbar.</p></div>`;
+                return;
+            }
+
+            const monthNames = {
+                '01': 'Januar', '02': 'Februar', '03': 'März', '04': 'April',
+                '05': 'Mai', '06': 'Juni', '07': 'Juli', '08': 'August',
+                '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Dezember'
+            };
+
+            let html = '';
+            sortedKeys.forEach(key => {
+                const parts = key.split('-');
+                const year = parts[0];
+                const monthNum = parts[1];
+                const monthName = (monthNames[monthNum] || monthNum) + ' ' + year;
+                const m = monthlyMap[key];
+
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <h4>${monthName}</h4>
+                            <p>${m.count} ${m.count === 1 ? 'Verkauf' : 'Verkäufe'}</p>
+                        </div>
+                        <div class="item-stats">
+                            <div class="item-main-val">+${formatCurrency(m.profit)}</div>
+                            <div class="item-sub-val">Umsatz: ${formatCurrency(m.revenue)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderInventory(inventoryMap) {
+            const el = document.getElementById('inventoryList');
+            const sorted = Object.keys(inventoryMap).map(b => ({ name: b, ...inventoryMap[b] })).sort((a, b) => b.count - a.count);
+
+            if (sorted.length === 0) {
+                el.innerHTML = `<div class="empty-state"><p>Keine aktiven Lagerartikel gefunden.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            sorted.forEach(brandObj => {
+                // Gruppiere Artikel nach Name, Größe und zeige Tage im Lager an
+                let itemsDetailHtml = '';
+                brandObj.items.forEach(it => {
+                    const daysText = it.activeDays !== null ? ` • ${it.activeDays} Tage im Lager` : '';
+                    const costText = it.cost > 0 ? ` (${formatCurrency(it.cost)})` : '';
+                    itemsDetailHtml += `<div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">• <strong>${it.title}</strong> (Größe: ${it.size})${costText}<span style="color:var(--accent-orange);">${daysText}</span></div>`;
+                });
+
+                html += `
+                    <div class="list-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                        <div style="display: flex; justify-content: space-width; width: 100%; justify-content: space-between; align-items: center;">
+                            <div class="item-info">
+                                <h4>${brandObj.name}</h4>
+                            </div>
+                            <div class="item-stats">
+                                <div class="item-main-val orange">${brandObj.count} Stk. (EK: ${formatCurrency(brandObj.cost)})</div>
+                            </div>
+                        </div>
+                        <div style="width: 100%; border-top: 1px solid var(--border-color); padding-top: 6px; margin-top: 4px;">
+                            ${itemsDetailHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderSources(sourcesMap) {
+            const el = document.getElementById('sourcesList');
+            const sorted = Object.keys(sourcesMap).map(s => ({ name: s, ...sourcesMap[s] })).sort((a, b) => b.spent - a.spent);
+
+            if (sorted.length === 0 || (sorted.length === 1 && sorted[0].name === 'Unbekannt' && sorted[0].spent === 0)) {
+                el.innerHTML = `<div class="empty-state"><p>Keine Einkaufsquellen in den Daten gefunden.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            sorted.forEach(item => {
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.count} Artikel gekauft</p>
+                        </div>
+                        <div class="item-stats">
+                            <div class="item-main-val orange">${formatCurrency(item.spent)}</div>
+                            <div class="item-sub-val">Ausgaben</div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderBrands(brandMap) {
+            const el = document.getElementById('brandsList');
+            const sorted = Object.keys(brandMap).map(b => ({ name: b, ...brandMap[b] })).sort((a, b) => b.profit - a.profit);
+
+            if (sorted.length === 0) {
+                el.innerHTML = `<div class="empty-state"><p>Noch keine Verkaufsdaten vorhanden.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            sorted.forEach(b => {
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <h4>${b.name}</h4>
+                            <p>${b.count} verkauft</p>
+                        </div>
+                        <div class="item-stats">
+                            <div class="item-main-val">+${formatCurrency(b.profit)}</div>
+                            <div class="item-sub-val">Umsatz: ${formatCurrency(b.revenue)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderMissingInvoices(missingInvoices) {
+            const el = document.getElementById('missingInvoicesList');
+            if (missingInvoices.length === 0) {
+                el.innerHTML = `<div class="empty-state"><p>Top! Bei allen Artikeln mit Einkaufspreis ist eine Rechnungsnummer vorhanden.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            missingInvoices.slice(0, 10).forEach(item => {
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <h4>${item.brand ? item.brand + ' – ' : ''}${item.title}</h4>
+                            <p>EK: ${formatCurrency(item.cost)}</p>
+                        </div>
+                        <div class="item-stats">
+                            <div class="item-main-val red">Beleg fehlt</div>
+                            <div class="item-sub-val">Artikel #${item.index}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderSlowMovers(itemsWithAge) {
+            const el = document.getElementById('slowMoversList');
+            if (!itemsWithAge || itemsWithAge.length === 0) {
+                el.innerHTML = `<div class="empty-state"><p>Keine Datums-Vergleiche für Standzeiten gefunden.</p></div>`;
+                return;
+            }
+
+            itemsWithAge.sort((a, b) => b.days - a.days);
+            let html = '';
+            itemsWithAge.slice(0, 5).forEach(item => {
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <h4>${item.brand ? item.brand + ' – ' : ''}${item.title}</h4>
+                            <p>Gewinn: +${formatCurrency(item.profit)}</p>
+                        </div>
+                        <div class="item-stats">
+                            <div class="item-main-val red">${item.days} Tage</div>
+                            <div class="item-sub-val">Standzeit</div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+        }
+
+        function renderTransactions(filter = '') {
+            const txListEl = document.getElementById('txList');
+            const query = filter.toLowerCase().trim();
+
+            const filtered = rawData.filter(item => {
+                if (!query) return true;
+                const allValues = Object.values(item).filter(Boolean).join(' ').toLowerCase();
+                return allValues.includes(query);
+            });
+
+            if (filtered.length === 0) {
+                txListEl.innerHTML = `<div class="empty-state"><p>Keine passenden Einträge gefunden.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((item, index) => {
+                const title = findField(item, ['name', 'artikel', 'titel', 'produkt']) || 'Artikel #' + (index + 1);
+                const brand = findField(item, ['marke', 'brand', 'hersteller']);
+                const size = findField(item, ['groesse', 'size']);
+                const rev = parseNum(findField(item, ['verkaufspreis', 'price', 'revenue', 'vk', 'soll', 'betrag']));
+                const cost = parseNum(findField(item, ['einkaufspreis', 'ek', 'cost', 'einkauf']));
+                const profit = rev - cost;
+                
+                let detailsHtml = '';
+                for (const [key, val] of Object.entries(item)) {
+                    if (val !== undefined && val !== null && val !== '') {
+                        detailsHtml += `<div class="detail-item">${key}: <span>${val}</span></div>`;
+                    }
+                }
+
+                html += `
+                    <div class="tx-card" onclick="this.classList.toggle('expanded')">
+                        <div class="tx-header-row">
+                            <div class="tx-main">
+                                <h4>${brand ? brand + ' – ' : ''}${title}</h4>
+                                <div class="tx-sub">
+                                    ${size ? `<span>Größe: ${size}</span>` : ''}
+                                    <span>(Tippen für Details)</span>
+                                </div>
+                            </div>
+                            <div class="tx-right">
+                                <div class="tx-price">${rev > 0 ? formatCurrency(rev) : 'Im Lager'}</div>
+                                <div class="tx-profit">${rev > 0 ? '+' + formatCurrency(profit) : 'EK: ' + formatCurrency(cost)}</div>
+                            </div>
+                        </div>
+                        <div class="tx-details">
+                            ${detailsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            txListEl.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
