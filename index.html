@@ -2,1359 +2,2374 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>Sales & Inventory Analytics</title>
+<title>LagerManager Analytics</title>
+
 <style>
 :root{
-    --bg:#000;
-    --card:#1c1c1e;
-    --card2:#2c2c2e;
-    --text:#fff;
-    --muted:#8e8e93;
-    --green:#30d158;
-    --blue:#0a84ff;
-    --orange:#ff9f0a;
-    --red:#ff453a;
-    --border:#38383a;
-    --safe-top:env(safe-area-inset-top);
-    --safe-bottom:env(safe-area-inset-bottom);
+  --bg:#000;
+  --card:#111;
+  --card2:#181818;
+  --line:#292929;
+  --text:#f5f5f7;
+  --muted:#8e8e93;
+  --green:#30d158;
+  --red:#ff453a;
+  --blue:#0a84ff;
 }
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
-    -webkit-tap-highlight-color:transparent;
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
+
 body{
-    background:var(--bg);
-    color:var(--text);
-    padding:calc(var(--safe-top) + 12px) 12px calc(var(--safe-bottom) + 24px);
-    max-width:700px;
-    margin:auto;
-    -webkit-font-smoothing:antialiased;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
 }
-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:16px;
-    padding:0 4px;
+
+button,input,select{
+  font:inherit;
 }
-h1{
-    font-size:22px;
-    font-weight:700;
-    letter-spacing:-.4px;
+
+button{
+  border:0;
+  color:var(--text);
+  background:#1c1c1e;
+  border-radius:12px;
+  padding:10px 14px;
+  cursor:pointer;
 }
-.header-btns{
-    display:flex;
-    gap:6px;
+
+button:active{
+  opacity:.65;
+  transform:scale(.98);
 }
-.btn{
-    background:var(--blue);
-    color:#fff;
-    border:0;
-    padding:8px 10px;
-    border-radius:10px;
-    font-size:12px;
-    font-weight:600;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:4px;
+
+.app{
+  max-width:1100px;
+  margin:auto;
+  min-height:100vh;
 }
-.btn.secondary{
-    background:var(--card2);
-    border:1px solid var(--border);
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(0,0,0,.94);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+  padding:12px 14px 10px;
 }
-.upload-btn-container{
-    position:relative;
-    overflow:hidden;
-    display:inline-block;
+
+.headerTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
 }
-.upload-btn-container input{
-    position:absolute;
-    inset:0;
-    opacity:0;
-    width:100%;
-    height:100%;
+
+.title{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:-.5px;
 }
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:8px;
-    margin-bottom:18px;
+
+.subtitle{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
 }
-.stat-card{
-    background:var(--card);
-    border-radius:12px;
-    padding:10px 12px;
-    border:1px solid rgba(255,255,255,.04);
-    min-height:60px;
+
+.headerButtons{
+  display:flex;
+  gap:6px;
 }
-.stat-label{
-    display:block;
-    font-size:10px;
-    color:var(--muted);
-    font-weight:600;
-    margin-bottom:4px;
-    text-transform:uppercase;
-    letter-spacing:.3px;
+
+.iconBtn{
+  width:40px;
+  height:40px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
 }
-.stat-value{
-    display:block;
-    font-size:17px;
-    font-weight:700;
+
+.searchBox{
+  margin-top:10px;
+  position:relative;
 }
-.stat-value.large{
-    font-size:20px;
+
+.searchBox input{
+  width:100%;
+  height:44px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#1c1c1e;
+  color:white;
+  padding:0 42px 0 40px;
+  outline:none;
+  font-size:16px;
 }
+
+.searchBox input:focus{
+  border-color:#444;
+}
+
+.searchIcon{
+  position:absolute;
+  left:14px;
+  top:11px;
+  color:var(--muted);
+  font-size:19px;
+}
+
+.clearSearch{
+  position:absolute;
+  right:9px;
+  top:7px;
+  width:30px;
+  height:30px;
+  padding:0;
+  border-radius:50%;
+  background:#3a3a3c;
+  color:#aaa;
+  display:none;
+}
+
+.tabs{
+  display:flex;
+  background:#1c1c1e;
+  border-radius:12px;
+  padding:2px;
+  margin-top:10px;
+}
+
+.tab{
+  flex:1;
+  background:transparent;
+  padding:8px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.tab.active{
+  background:#3a3a3c;
+  color:white;
+  font-weight:600;
+}
+
+.content{
+  padding:12px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.stat{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  min-height:72px;
+}
+
+.statLabel{
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+
+.statValue{
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:-.4px;
+}
+
 .green{color:var(--green)}
-.blue{color:var(--blue)}
-.orange{color:var(--orange)}
 .red{color:var(--red)}
-.section-title{
-    font-size:15px;
-    font-weight:600;
-    margin:20px 0 8px 4px;
+
+.section{
+  margin-bottom:14px;
 }
-.list-box{
-    background:var(--card);
-    border-radius:12px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.04);
-    margin-bottom:18px;
+
+.sectionHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:7px;
 }
-.list-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 14px;
-    border-bottom:1px solid var(--border);
-    gap:10px;
+
+.sectionTitle{
+  font-size:17px;
+  font-weight:700;
 }
-.list-item:last-child{
-    border-bottom:0;
+
+.sectionInfo{
+  color:var(--muted);
+  font-size:11px;
 }
-.item-info{
-    min-width:0;
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
 }
-.item-info h4{
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:2px;
-    word-break:break-word;
+
+.row{
+  padding:11px 12px;
+  border-bottom:1px solid var(--line);
 }
-.item-info p{
-    font-size:11px;
-    color:var(--muted);
+
+.row:last-child{
+  border-bottom:0;
 }
-.item-stats{
-    text-align:right;
-    flex-shrink:0;
+
+.rowTop{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
 }
-.item-main-val{
-    font-size:13px;
-    font-weight:700;
+
+.rowTitle{
+  font-size:14px;
+  font-weight:600;
 }
-.item-sub-val{
-    font-size:11px;
-    color:var(--muted);
-    margin-top:2px;
+
+.rowSub{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
 }
-.empty-state{
-    text-align:center;
-    padding:25px 16px;
-    color:var(--muted);
-    font-size:13px;
+
+.rowValue{
+  text-align:right;
+  white-space:nowrap;
+  font-size:13px;
+  font-weight:600;
 }
-.search-container{
-    margin-bottom:12px;
+
+.badge{
+  display:inline-block;
+  padding:3px 7px;
+  border-radius:7px;
+  background:#292929;
+  color:#ddd;
+  font-size:10px;
+  margin-right:4px;
 }
-.search-input{
-    width:100%;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:10px 14px;
-    color:#fff;
-    font-size:14px;
-    outline:none;
+
+.badge.greenBadge{
+  color:var(--green);
 }
-.search-input:focus{
-    border-color:var(--blue);
+
+.badge.redBadge{
+  color:var(--red);
 }
-.tx-list{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px;
 }
-.tx-card{
-    background:var(--card);
-    border-radius:10px;
-    padding:10px 14px;
-    border:1px solid rgba(255,255,255,.04);
-    cursor:pointer;
+
+.smallBtn{
+  padding:7px 10px;
+  border-radius:9px;
+  font-size:12px;
 }
-.tx-header-row{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
+
+.empty{
+  padding:28px 15px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
 }
-.tx-main{
-    min-width:0;
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
 }
-.tx-main h4{
-    font-size:13px;
-    font-weight:600;
-    word-break:break-word;
+
+th{
+  text-align:left;
+  color:var(--muted);
+  font-weight:500;
+  padding:9px 8px;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
 }
-.tx-sub{
-    font-size:11px;
-    color:var(--muted);
-    margin-top:3px;
+
+td{
+  padding:9px 8px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
 }
-.tx-right{
-    text-align:right;
-    flex-shrink:0;
+
+tr:last-child td{
+  border-bottom:0;
 }
-.tx-price{
-    font-size:13px;
-    font-weight:700;
+
+.scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
 }
-.tx-profit{
-    font-size:11px;
-    font-weight:600;
-    margin-top:2px;
+
+.modalBack{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
 }
-.tx-details{
-    display:none;
-    margin-top:8px;
-    padding-top:8px;
-    border-top:1px solid var(--border);
-    grid-template-columns:1fr 1fr;
-    gap:5px 10px;
+
+.modalBack.show{
+  display:flex;
 }
-.tx-card.expanded .tx-details{
-    display:grid;
+
+.modal{
+  width:100%;
+  max-width:650px;
+  max-height:92vh;
+  overflow:auto;
+  background:#1c1c1e;
+  border-radius:20px 20px 0 0;
+  padding:15px;
+  padding-bottom:calc(18px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 50px rgba(0,0,0,.5);
 }
-.detail-item{
-    font-size:11px;
-    color:var(--muted);
-    word-break:break-word;
+
+.modalHandle{
+  width:38px;
+  height:5px;
+  border-radius:4px;
+  background:#555;
+  margin:0 auto 15px;
 }
-.detail-item span{
-    color:#fff;
-    font-weight:600;
+
+.modalTitle{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:12px;
 }
-.data-status{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:9px 12px;
-    margin-bottom:12px;
-    font-size:11px;
-    color:var(--muted);
+
+.field{
+  margin-bottom:11px;
 }
-.data-status strong{
-    color:#fff;
+
+.field label{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin:0 0 5px 3px;
 }
-@media(max-width:420px){
-    body{
-        padding-left:8px;
-        padding-right:8px;
-    }
-    .stat-value{
-        font-size:15px;
-    }
-    .stat-value.large{
-        font-size:18px;
-    }
-    h1{
-        font-size:19px;
-    }
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  border:1px solid #333;
+  border-radius:11px;
+  background:#2c2c2e;
+  color:white;
+  padding:10px 11px;
+  outline:none;
+  font-size:15px;
+}
+
+.field textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.modalActions{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+}
+
+.modalActions button{
+  flex:1;
+}
+
+.primary{
+  background:var(--green);
+  color:#000;
+  font-weight:700;
+}
+
+.danger{
+  background:var(--red);
+  color:#fff;
+  font-weight:600;
+}
+
+.secondary{
+  background:#3a3a3c;
+}
+
+.fileInput{
+  display:none;
+}
+
+.infoBox{
+  padding:11px;
+  border-radius:11px;
+  background:#252527;
+  color:#ccc;
+  font-size:12px;
+  line-height:1.5;
+  margin-bottom:12px;
+}
+
+.searchResultCount{
+  color:var(--muted);
+  font-size:11px;
+  margin:7px 2px 10px;
+}
+
+@media(min-width:700px){
+  .stats{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+
+@media(prefers-reduced-motion:no-preference){
+  button,input{
+    transition:.15s ease;
+  }
 }
 </style>
 </head>
+
 <body>
-<header>
-    <h1>Analytics</h1>
-    <div class="header-btns">
-        <div class="upload-btn-container">
-            <button class="btn">
-                📂 Laden
-            </button>
-            <input type="file" id="jsonFileInput" accept=".json,application/json">
-        </div>
+
+<div class="app">
+
+<header class="header">
+  <div class="headerTop">
+    <div>
+      <div class="title">Analytics</div>
+      <div class="subtitle">LagerManager Auswertung</div>
     </div>
+
+    <div class="headerButtons">
+      <button class="iconBtn" onclick="openImport()" title="Import">↥</button>
+      <button class="iconBtn" onclick="exportData()" title="Export">↧</button>
+    </div>
+  </div>
+
+  <div class="searchBox">
+    <span class="searchIcon">⌕</span>
+    <input id="globalSearch"
+           type="search"
+           placeholder="Alles durchsuchen …"
+           autocomplete="off"
+           oninput="runSearch()">
+    <button id="clearSearch"
+            class="clearSearch"
+            onclick="clearSearch()">×</button>
+  </div>
+
+  <div class="tabs">
+    <button id="tabOverview" class="tab active" onclick="setTab('overview')">Übersicht</button>
+    <button id="tabSales" class="tab" onclick="setTab('sales')">Verkäufe</button>
+    <button id="tabPurchases" class="tab" onclick="setTab('purchases')">Einkäufe</button>
+    <button id="tabSearch" class="tab" onclick="setTab('search')">Suche</button>
+  </div>
 </header>
-<div class="data-status" id="dataStatus">
-    Noch keine Lager-JSON geladen.
+
+<main class="content" id="content"></main>
+
 </div>
-<!-- =========================
-     HAUPT-KENNZAHLEN
-========================= -->
-<div class="stats-grid">
-    <div class="stat-card">
-        <span class="stat-label">Nettogewinn Gesamt</span>
-        <span class="stat-value green large" id="totalProfit">0,00 €</span>
+
+<!-- IMPORT -->
+<div class="modalBack" id="importModal">
+  <div class="modal">
+    <div class="modalHandle"></div>
+    <div class="modalTitle">LagerManager-Daten importieren</div>
+
+    <div class="infoBox">
+      Wähle die JSON-Sicherungsdatei aus deiner LagerManager-App aus.
+      Die Daten werden nur in dieser Analytics-App verarbeitet.
     </div>
-    <div class="stat-card">
-        <span class="stat-label">Gesamtumsatz</span>
-        <span class="stat-value" id="totalRevenue">0,00 €</span>
+
+    <input id="jsonFile" class="fileInput" type="file" accept=".json,application/json">
+
+    <div class="modalActions">
+      <button class="secondary" onclick="closeImport()">Abbrechen</button>
+      <button class="primary" onclick="document.getElementById('jsonFile').click()">Datei wählen</button>
     </div>
-    <div class="stat-card">
-        <span class="stat-label">Einkaufskosten Verkäufe</span>
-        <span class="stat-value orange" id="totalCost">0,00 €</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Verkaufte Stück</span>
-        <span class="stat-value blue" id="totalSoldQty">0</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Verkaufsrechnungen</span>
-        <span class="stat-value" id="invoiceCount">0</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Ø Gewinn / Stück</span>
-        <span class="stat-value green" id="avgProfitPerItem">0,00 €</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Ø Marge</span>
-        <span class="stat-value green" id="avgMargin">0 %</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Versand + Gebühren</span>
-        <span class="stat-value red" id="totalExpenses">0,00 €</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Aktives Lager</span>
-        <span class="stat-value blue large" id="inventoryCount">0 Stk.</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Lagerwert EK</span>
-        <span class="stat-value orange" id="inventoryCost">0,00 €</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Ladenhüter &gt;60 Tage</span>
-        <span class="stat-value red" id="stuckCapitalValue">0,00 €</span>
-    </div>
-    <div class="stat-card">
-        <span class="stat-label">Artikel im Lager</span>
-        <span class="stat-value" id="inventoryArticleCount">0</span>
-    </div>
+  </div>
 </div>
-<!-- =========================
-     PLATTFORMEN
-========================= -->
-<div class="section-title">
-    Verkaufsplattformen
-</div>
-<div class="list-box" id="platformsList">
-    <div class="empty-state">
-        Keine Verkaufsdaten geladen.
+
+<!-- DETAIL -->
+<div class="modalBack" id="detailModal">
+  <div class="modal">
+    <div class="modalHandle"></div>
+    <div id="detailContent"></div>
+    <div class="modalActions">
+      <button class="secondary" onclick="closeDetail()">Schließen</button>
     </div>
+  </div>
 </div>
-<!-- =========================
-     MONATE
-========================= -->
-<div class="section-title">
-    Monatsvergleich
-</div>
-<div class="list-box" id="monthlyList">
-    <div class="empty-state">
-        Keine Verkaufsdaten geladen.
-    </div>
-</div>
-<!-- =========================
-     LAGER
-========================= -->
-<div class="section-title">
-    Aktueller Lagerbestand
-</div>
-<div class="list-box" id="inventoryList">
-    <div class="empty-state">
-        Keine Lagerdaten geladen.
-    </div>
-</div>
-<!-- =========================
-     EINKAUFSQUELLEN
-========================= -->
-<div class="section-title">
-    Einkaufsquellen
-</div>
-<div class="list-box" id="sourcesList">
-    <div class="empty-state">
-        Keine Lagerdaten geladen.
-    </div>
-</div>
-<!-- =========================
-     MARKEN
-========================= -->
-<div class="section-title">
-    Marken – Verkaufsanalyse
-</div>
-<div class="list-box" id="brandsList">
-    <div class="empty-state">
-        Keine Verkaufsdaten geladen.
-    </div>
-</div>
-<!-- =========================
-     FEHLENDE RECHNUNGEN
-========================= -->
-<div class="section-title">
-    Fehlende Rechnungsnummer / Belege
-</div>
-<div class="list-box" id="missingInvoicesList">
-    <div class="empty-state">
-        Keine Daten geladen.
-    </div>
-</div>
-<!-- =========================
-     LADENHÜTER
-========================= -->
-<div class="section-title">
-    Längste Standzeiten
-</div>
-<div class="list-box" id="slowMoversList">
-    <div class="empty-state">
-        Keine Lagerdaten geladen.
-    </div>
-</div>
-<!-- =========================
-     SUCHEN
-========================= -->
-<div class="section-title">
-    Verkäufe & Artikel
-</div>
-<div class="search-container">
-    <input
-        type="text"
-        id="searchInput"
-        class="search-input"
-        placeholder="Suche nach Artikel, Art.-Nr., Rechnung, Plattform..."
-    >
-</div>
-<div class="tx-list" id="txList">
-    <div class="empty-state">
-        Keine Daten geladen.
-    </div>
-</div>
+
 <script>
+"use strict";
+
 /* =========================================================
    DATEN
 ========================================================= */
-let inventory = [];
-let salesLog = [];
+
+let data = {
+  artikel: [],
+  sales: []
+};
+
+let currentTab = "overview";
+let searchResults = [];
+
+const STORAGE_KEY = "LagerManagerAnalyticsV2";
+
 /* =========================================================
-   HILFSFUNKTIONEN
+   START
 ========================================================= */
-function parseNumber(value){
-    if(typeof value === "number"){
-        return isFinite(value) ? value : 0;
-    }
-    if(value === null || value === undefined || value === ""){
-        return 0;
-    }
-    let s = String(value)
-        .replace(/[^\d,.-]/g,"")
-        .trim();
-    if(s.includes(",") && s.includes(".")){
-        s = s.replace(/\./g,"").replace(",",".");
-    }else if(s.includes(",")){
-        s = s.replace(",",".");
-    }
-    const n = parseFloat(s);
-    return isFinite(n) ? n : 0;
-}
-function euro(value){
-    return new Intl.NumberFormat("de-DE",{
-        style:"currency",
-        currency:"EUR"
-    }).format(value || 0);
-}
-function escapeHtml(value){
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-function formatDate(date){
-    if(!date) return "";
-    const s = String(date);
-    if(/^\d{4}-\d{2}-\d{2}$/.test(s)){
-        const p = s.split("-");
-        return `${p[2]}.${p[1]}.${p[0]}`;
-    }
-    return s;
-}
-function getDaysSince(date){
-    if(!date) return null;
-    const d = new Date(date + "T00:00:00");
-    if(isNaN(d.getTime())) return null;
-    const now = new Date();
-    const today = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-    );
-    const diff = today - d;
-    if(diff < 0) return 0;
-    return Math.floor(diff / 86400000);
-}
-/* =========================================================
-   MARKENERKENNUNG
-   Deine Lager-App besitzt aktuell kein eigenes Feld "Marke".
-   Deshalb wird die Marke – soweit möglich – aus dem Namen
-   erkannt.
-========================================================= */
-const KNOWN_BRANDS = [
-    "Adidas",
-    "Nike",
-    "Puma",
-    "Reebok",
-    "McKinley",
-    "Fjällräven",
-    "Fjallraven",
-    "Jack Wolfskin",
-    "The North Face",
-    "Columbia",
-    "Salomon",
-    "Mammut",
-    "Vaude",
-    "Patagonia",
-    "Under Armour",
-    "ASICS",
-    "New Balance",
-    "Converse",
-    "Vans",
-    "Levi's",
-    "Tommy Hilfiger",
-    "Calvin Klein",
-    "Boss",
-    "Hugo Boss",
-    "Lacoste",
-    "Esprit",
-    "s.Oliver",
-    "Engelbert Strauss",
-    "Pokémon",
-    "Pokemon",
-    "Nintendo",
-    "LEGO",
-    "Lego"
-];
-function getBrand(name){
-    const text = String(name || "").toLowerCase();
-    for(const brand of KNOWN_BRANDS){
-        if(text.includes(brand.toLowerCase())){
-            return brand;
-        }
-    }
-    return "Marke nicht angegeben";
-}
-/* =========================================================
-   JSON LADEN
-========================================================= */
-document
-.getElementById("jsonFileInput")
-.addEventListener("change",function(event){
-    const file = event.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e){
-        try{
-            const data = JSON.parse(e.target.result);
-            /*
-             * Deine Lager-App exportiert:
-             *
-             * {
-             *    artikel: [...],
-             *    sales: [...]
-             * }
-             */
-            if(!data || typeof data !== "object"){
-                throw new Error("Die JSON-Datei hat kein gültiges Format.");
-            }
-            inventory = Array.isArray(data.artikel)
-                ? data.artikel
-                : [];
-            salesLog = Array.isArray(data.sales)
-                ? data.sales
-                : [];
-            processData();
-            document.getElementById("dataStatus").innerHTML =
-                `<strong>${escapeHtml(file.name)}</strong> geladen · ` +
-                `${inventory.length} Lagerartikel · ` +
-                `${salesLog.length} Verkaufsdatensätze`;
-        }catch(error){
-            alert(
-                "Fehler beim Einlesen der JSON-Datei:\n\n" +
-                error.message
-            );
-        }
-    };
-    reader.readAsText(file);
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadLocalData();
+
+  document.getElementById("jsonFile").addEventListener("change", importJSON);
+
+  render();
 });
+
 /* =========================================================
-   HAUPTBERECHNUNG
+   NORMALISIERUNG
 ========================================================= */
-function processData(){
-    /*
-     * ===============================================
-     * LAGER
-     * ===============================================
-     */
-    let activeQty = 0;
-    let activeValue = 0;
-    let activeArticleCount = 0;
-    let stuckCapital = 0;
-    const inventoryMap = {};
-    const sourcesMap = {};
-    inventory.forEach(item => {
-        const qty = parseNumber(item.menge);
-        const price = parseNumber(item.preis);
-        /*
-         * Nur Artikel mit tatsächlichem Bestand
-         * gehören zum aktiven Lager.
-         */
-        if(qty > 0){
-            activeQty += qty;
-            activeValue += price * qty;
-            activeArticleCount++;
-            const brand = getBrand(item.name);
-            if(!inventoryMap[brand]){
-                inventoryMap[brand] = {
-                    qty:0,
-                    value:0,
-                    items:[]
-                };
-            }
-            inventoryMap[brand].qty += qty;
-            inventoryMap[brand].value += price * qty;
-            inventoryMap[brand].items.push({
-                name:item.name || "Unbekannter Artikel",
-                artnr:item.artnr || "",
-                size:item.groesse || "",
-                qty:qty,
-                price:price,
-                date:item.datum || "",
-                days:getDaysSince(item.datum)
-            });
-            /*
-             * LADENHÜTER
-             *
-             * Nur tatsächlich noch vorhandene Stück.
-             */
-            const days = getDaysSince(item.datum);
-            if(days !== null && days > 60){
-                stuckCapital += price * qty;
-            }
-        }
-        /*
-         * Einkaufsquellen
-         *
-         * Bei deiner Lager-App heißt das Feld:
-         * ort
-         */
-        const source =
-            String(item.ort || "Nicht angegeben").trim()
-            || "Nicht angegeben";
-        if(!sourcesMap[source]){
-            sourcesMap[source] = {
-                qty:0,
-                spent:0
-            };
-        }
-        sourcesMap[source].qty += Math.max(qty,0);
-        sourcesMap[source].spent += price * Math.max(qty,0);
-    });
-    /*
-     * ===============================================
-     * VERKÄUFE
-     * ===============================================
-     */
-    let totalRevenue = 0;
-    let totalCost = 0;
-    let totalShipping = 0;
-    let totalFees = 0;
-    let totalSoldQty = 0;
-    let invoiceSet = new Set();
-    const platformMap = {};
-    const monthlyMap = {};
-    const brandMap = {};
-    const slowMovers = [];
-    salesLog.forEach(sale => {
-        /*
-         * STORNO wird nicht in Umsatz/Gewinn gezählt.
-         */
-        if(sale.isStorno === true){
-            return;
-        }
-        const qty = parseNumber(sale.qty);
-        const revenue = parseNumber(sale.total);
-        const buyPrice = parseNumber(sale.buyPrice);
-        const shipping = parseNumber(sale.shipping);
-        const fees = parseNumber(sale.fees);
-        /*
-         * EXAKTE GEWINNBERECHNUNG WIE IN LAGER-APP:
-         *
-         * total
-         * - shipping
-         * - fees
-         * - buyPrice * qty
-         */
-        const cost = buyPrice * qty;
-        const profit =
-            revenue
-            - shipping
-            - fees
-            - cost;
-        totalRevenue += revenue;
-        totalCost += cost;
-        totalShipping += shipping;
-        totalFees += fees;
-        totalSoldQty += qty;
-        if(sale.invoiceNr){
-            invoiceSet.add(String(sale.invoiceNr));
-        }
-        /*
-         * ==========================================
-         * PLATTFORM
-         * ==========================================
-         */
-        const platform =
-            String(sale.platform || "Sonstiges").trim()
-            || "Sonstiges";
-        if(!platformMap[platform]){
-            platformMap[platform] = {
-                qty:0,
-                revenue:0,
-                cost:0,
-                expenses:0,
-                profit:0
-            };
-        }
-        platformMap[platform].qty += qty;
-        platformMap[platform].revenue += revenue;
-        platformMap[platform].cost += cost;
-        platformMap[platform].expenses += shipping + fees;
-        platformMap[platform].profit += profit;
-        /*
-         * ==========================================
-         * MONAT
-         * ==========================================
-         */
-        if(sale.date){
-            const date = new Date(sale.date + "T00:00:00");
-            if(!isNaN(date.getTime())){
-                const key =
-                    date.getFullYear() +
-                    "-" +
-                    String(date.getMonth()+1).padStart(2,"0");
-                if(!monthlyMap[key]){
-                    monthlyMap[key] = {
-                        qty:0,
-                        revenue:0,
-                        cost:0,
-                        expenses:0,
-                        profit:0
-                    };
-                }
-                monthlyMap[key].qty += qty;
-                monthlyMap[key].revenue += revenue;
-                monthlyMap[key].cost += cost;
-                monthlyMap[key].expenses += shipping + fees;
-                monthlyMap[key].profit += profit;
-            }
-        }
-        /*
-         * ==========================================
-         * MARKE
-         * ==========================================
-         */
-        const brand = getBrand(sale.name);
-        if(!brandMap[brand]){
-            brandMap[brand] = {
-                qty:0,
-                revenue:0,
-                cost:0,
-                profit:0
-            };
-        }
-        brandMap[brand].qty += qty;
-        brandMap[brand].revenue += revenue;
-        brandMap[brand].cost += cost;
-        brandMap[brand].profit += profit;
-        /*
-         * ==========================================
-         * STANDZEIT VERKAUF
-         * ==========================================
-         */
-        const days = getDaysSince(sale.buyDate);
-        if(days !== null){
-            slowMovers.push({
-                name:sale.name || "Artikel",
-                artnr:sale.artnr || "",
-                days:days,
-                profit:profit
-            });
-        }
-    });
-    /*
-     * ===============================================
-     * GESAMTGEWINN
-     * ===============================================
-     */
-    const totalExpenses =
-        totalShipping + totalFees;
-    const totalProfit =
-        totalRevenue
-        - totalExpenses
-        - totalCost;
-    /*
-     * Marge bezogen auf Umsatz.
-     */
-    const avgMargin =
-        totalRevenue > 0
-            ? (totalProfit / totalRevenue) * 100
-            : 0;
-    const avgProfitPerItem =
-        totalSoldQty > 0
-            ? totalProfit / totalSoldQty
-            : 0;
-    /*
-     * ===============================================
-     * KENNZAHLEN AUSGEBEN
-     * ===============================================
-     */
-    document.getElementById("totalProfit").textContent =
-        euro(totalProfit);
-    document.getElementById("totalRevenue").textContent =
-        euro(totalRevenue);
-    document.getElementById("totalCost").textContent =
-        euro(totalCost);
-    document.getElementById("totalSoldQty").textContent =
-        totalSoldQty;
-    document.getElementById("invoiceCount").textContent =
-        invoiceSet.size;
-    document.getElementById("avgProfitPerItem").textContent =
-        euro(avgProfitPerItem);
-    document.getElementById("avgMargin").textContent =
-        avgMargin.toFixed(1).replace(".",",") + " %";
-    document.getElementById("totalExpenses").textContent =
-        euro(totalExpenses);
-    document.getElementById("inventoryCount").textContent =
-        activeQty + " Stk.";
-    document.getElementById("inventoryCost").textContent =
-        euro(activeValue);
-    document.getElementById("stuckCapitalValue").textContent =
-        euro(stuckCapital);
-    document.getElementById("inventoryArticleCount").textContent =
-        activeArticleCount;
-    /*
-     * ===============================================
-     * BEREICHE RENDERN
-     * ===============================================
-     */
-    renderPlatforms(platformMap);
-    renderMonthly(monthlyMap);
-    renderInventory(inventoryMap);
-    renderSources(sourcesMap);
-    renderBrands(brandMap);
-    renderMissingInvoices();
-    renderSlowMovers(slowMovers);
-    renderTransactions();
+
+function clean(v){
+  if(v === null || v === undefined) return "";
+  return String(v).trim();
 }
+
+function lower(v){
+  return clean(v).toLocaleLowerCase("de-DE");
+}
+
+function normalizePlatform(v){
+  const x = lower(v);
+
+  if(x === "ebay") return "eBay";
+  if(x === "vinted") return "Vinted";
+  if(x === "kleinanzeigen") return "Kleinanzeigen";
+  if(x === "amazon") return "Amazon";
+  if(x === "etsy") return "Etsy";
+  if(x === "shopify") return "Shopify";
+  if(x === "paypal") return "PayPal";
+  if(x === "flohmarkt") return "Flohmarkt";
+
+  return clean(v) || "Sonstiges";
+}
+
+function normalizeSource(v){
+  const x = lower(v);
+
+  const map = {
+    "müller":"Müller",
+    "mueller":"Müller",
+    "sportspar":"Sportspar",
+    "picksport":"Picksport",
+    "amazon":"Amazon",
+    "ebay":"eBay",
+    "kleinanzeigen":"Kleinanzeigen",
+    "vinted":"Vinted"
+  };
+
+  return map[x] || clean(v) || "Unbekannt";
+}
+
+function normalizeSize(v){
+  return clean(v).toLocaleUpperCase("de-DE");
+}
+
+/* =========================================================
+   ARTIKELNAME
+   Erstes Wort ist immer der Artikelname
+========================================================= */
+
+function getArticleName(name){
+  const value = clean(name);
+
+  if(!value) return "Unbekannt";
+
+  return value.split(/\s+/)[0];
+}
+
+/* =========================================================
+   ZAHLEN / DATEN
+========================================================= */
+
+function number(v){
+  if(typeof v === "number") return isFinite(v) ? v : 0;
+
+  let s = clean(v)
+    .replace(/[€$]/g,"")
+    .replace(/\s/g,"");
+
+  if(!s) return 0;
+
+  if(s.includes(",") && s.includes(".")){
+    if(s.lastIndexOf(",") > s.lastIndexOf(".")){
+      s = s.replace(/\./g,"").replace(",",".");
+    }else{
+      s = s.replace(/,/g,"");
+    }
+  }else{
+    s = s.replace(",",".");
+  }
+
+  const n = parseFloat(s);
+  return isFinite(n) ? n : 0;
+}
+
+function formatEuro(v){
+  return number(v).toLocaleString("de-DE",{
+    style:"currency",
+    currency:"EUR"
+  });
+}
+
+function formatDate(v){
+  const s = clean(v);
+  if(!s) return "—";
+
+  const d = new Date(s);
+
+  if(!isNaN(d)){
+    return d.toLocaleDateString("de-DE");
+  }
+
+  if(/^\d{2}-\d{2}-\d{4}$/.test(s)) return s;
+
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){
+    const [y,m,day] = s.split("-");
+    return `${day}.${m}.${y}`;
+  }
+
+  return s;
+}
+
+function dateValue(v){
+  if(!v) return 0;
+
+  const d = new Date(v);
+
+  if(!isNaN(d)) return d.getTime();
+
+  const m = clean(v).match(/^(\d{2})[-./](\d{2})[-./](\d{4})$/);
+
+  if(m){
+    return new Date(
+      Number(m[3]),
+      Number(m[2])-1,
+      Number(m[1])
+    ).getTime();
+  }
+
+  return 0;
+}
+
+/* =========================================================
+   STORNO
+========================================================= */
+
+function isStorno(s){
+  return s && (
+    s.isStorno === true ||
+    lower(s.isStorno) === "true" ||
+    lower(s.status) === "storno"
+  );
+}
+
+/* =========================================================
+   VERKAUFSDATEN
+========================================================= */
+
+function saleRevenue(s){
+  return number(s.total);
+}
+
+function saleShipping(s){
+  return number(s.shipping);
+}
+
+function saleFees(s){
+  return number(s.fees);
+}
+
+function saleCost(s){
+  return number(s.buyPrice) * Math.max(1,number(s.qty));
+}
+
+function saleProfit(s){
+  if(isStorno(s)) return 0;
+
+  return saleRevenue(s)
+    - saleShipping(s)
+    - saleFees(s)
+    - saleCost(s);
+}
+
+/* =========================================================
+   KÄUFER / ADRESSE
+========================================================= */
+
+function addressParts(s){
+  const a = s.address;
+
+  if(typeof a === "object" && a !== null){
+    return {
+      name:clean(a.name || a.vorname || a.fullName),
+      street:clean(a.street || a.strasse || a.address),
+      zip:clean(a.zip || a.plz || a.postcode),
+      city:clean(a.city || a.stadt || a.ort),
+      country:clean(a.country || a.land)
+    };
+  }
+
+  const text = clean(a);
+
+  return {
+    name:clean(s.name),
+    street:text,
+    zip:"",
+    city:"",
+    country:""
+  };
+}
+
+function buyerName(s){
+  const a = addressParts(s);
+
+  return clean(
+    s.name ||
+    a.name ||
+    s.kundenname ||
+    s.buyer ||
+    s.buyerName
+  );
+}
+
+function buyerCity(s){
+  const a = addressParts(s);
+
+  return clean(
+    a.city ||
+    s.city ||
+    s.stadt ||
+    s.kundenstadt ||
+    s.ort
+  );
+}
+
+function buyerZip(s){
+  const a = addressParts(s);
+
+  return clean(
+    a.zip ||
+    s.zip ||
+    s.plz
+  );
+}
+
+function buyerStreet(s){
+  const a = addressParts(s);
+
+  return clean(
+    a.street ||
+    s.street ||
+    s.strasse
+  );
+}
+
+/* =========================================================
+   UNIVERSAL SEARCH
+========================================================= */
+
+function searchableSale(s){
+
+  const a = addressParts(s);
+
+  return [
+    s.invoiceNr,
+    s.rechnungsnummer,
+    s.artnr,
+    s.name,
+    s.artikelname,
+    s.platform,
+    normalizePlatform(s.platform),
+    s.date,
+    s.verkaufsdatum,
+    s.buyDate,
+    s.kaufdatum,
+    s.sourcingLoc,
+    normalizeSource(s.sourcingLoc),
+    s.groesse,
+    s.size,
+    normalizeSize(s.groesse),
+    buyerName(s),
+    buyerCity(s),
+    buyerZip(s),
+    buyerStreet(s),
+    a.country,
+    s.notiz,
+    s.note,
+    s.total,
+    s.buyPrice,
+    s.shipping,
+    s.fees
+  ].map(clean).join(" | ").toLocaleLowerCase("de-DE");
+}
+
+function searchableArticle(a){
+
+  return [
+    a.artnr,
+    a.name,
+    getArticleName(a.name),
+    a.groesse,
+    a.size,
+    normalizeSize(a.groesse),
+    a.zustand,
+    a.ort,
+    normalizeSource(a.ort),
+    a.datum,
+    a.kaufdatum,
+    a.preis,
+    a.notiz,
+    a.note,
+    a.menge
+  ].map(clean).join(" | ").toLocaleLowerCase("de-DE");
+}
+
+function runSearch(){
+
+  const input = document.getElementById("globalSearch");
+  const q = lower(input.value);
+
+  document.getElementById("clearSearch").style.display =
+    q ? "block" : "none";
+
+  if(!q){
+    searchResults = [];
+    render();
+    return;
+  }
+
+  const terms = q
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const sales = data.sales.filter(s => {
+
+    const text = searchableSale(s);
+
+    return terms.every(term => text.includes(term));
+  });
+
+  const articles = data.artikel.filter(a => {
+
+    const text = searchableArticle(a);
+
+    return terms.every(term => text.includes(term));
+  });
+
+  searchResults = {sales,articles};
+
+  currentTab = "search";
+  updateTabs();
+  renderSearch();
+}
+
+function clearSearch(){
+  document.getElementById("globalSearch").value = "";
+  document.getElementById("clearSearch").style.display = "none";
+  searchResults = [];
+  currentTab = "overview";
+  updateTabs();
+  render();
+}
+
+/* =========================================================
+   LOKALE DATEN
+========================================================= */
+
+function loadLocalData(){
+
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+      const parsed = JSON.parse(saved);
+
+      if(parsed && typeof parsed === "object"){
+        data.artikel = Array.isArray(parsed.artikel)
+          ? parsed.artikel
+          : [];
+
+        data.sales = Array.isArray(parsed.sales)
+          ? parsed.sales
+          : [];
+      }
+    }
+  }catch(e){
+    console.warn(e);
+  }
+}
+
+function saveLocalData(){
+  try{
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(data)
+    );
+  }catch(e){
+    console.warn(e);
+  }
+}
+
+/* =========================================================
+   IMPORT
+========================================================= */
+
+function openImport(){
+  document.getElementById("importModal").classList.add("show");
+}
+
+function closeImport(){
+  document.getElementById("importModal").classList.remove("show");
+}
+
+function importJSON(event){
+
+  const file = event.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = e => {
+
+    try{
+
+      const parsed = JSON.parse(e.target.result);
+
+      const artikel =
+        parsed.artikel ||
+        parsed.inventory ||
+        parsed.items ||
+        [];
+
+      const sales =
+        parsed.sales ||
+        parsed.verkaeufe ||
+        parsed.verkäufe ||
+        [];
+
+      data = {
+        artikel:Array.isArray(artikel) ? artikel : [],
+        sales:Array.isArray(sales) ? sales : []
+      };
+
+      saveLocalData();
+      closeImport();
+
+      currentTab = "overview";
+      updateTabs();
+      render();
+
+      alert(
+        "Import erfolgreich.\n\n" +
+        data.artikel.length + " Artikel\n" +
+        data.sales.length + " Verkäufe"
+      );
+
+    }catch(err){
+
+      alert("Die JSON-Datei konnte nicht gelesen werden.");
+      console.error(err);
+    }
+
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+}
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
+function exportData(){
+
+  const blob = new Blob(
+    [JSON.stringify(data,null,2)],
+    {type:"application/json"}
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download =
+    "LagerManager-Analytics-" +
+    new Date().toISOString().slice(0,10) +
+    ".json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   TABS
+========================================================= */
+
+function setTab(tab){
+
+  currentTab = tab;
+
+  updateTabs();
+  render();
+}
+
+function updateTabs(){
+
+  document.querySelectorAll(".tab").forEach(x =>
+    x.classList.remove("active")
+  );
+
+  const map = {
+    overview:"tabOverview",
+    sales:"tabSales",
+    purchases:"tabPurchases",
+    search:"tabSearch"
+  };
+
+  const el = document.getElementById(map[currentTab]);
+
+  if(el) el.classList.add("active");
+}
+
+/* =========================================================
+   STATISTIK
+========================================================= */
+
+function getValidSales(){
+  return data.sales.filter(s => !isStorno(s));
+}
+
+function getRevenue(){
+  return getValidSales()
+    .reduce((sum,s) => sum + saleRevenue(s),0);
+}
+
+function getCosts(){
+  return getValidSales()
+    .reduce((sum,s) => sum + saleCost(s),0);
+}
+
+function getExpenses(){
+  return getValidSales()
+    .reduce(
+      (sum,s) =>
+        sum + saleShipping(s) + saleFees(s),
+      0
+    );
+}
+
+function getProfit(){
+  return getValidSales()
+    .reduce((sum,s) => sum + saleProfit(s),0);
+}
+
+function getSoldQty(){
+  return getValidSales()
+    .reduce(
+      (sum,s) =>
+        sum + Math.max(1,number(s.qty)),
+      0
+    );
+}
+
+function getInventoryQty(){
+  return data.artikel
+    .reduce(
+      (sum,a) =>
+        sum + Math.max(0,number(a.menge)),
+      0
+    );
+}
+
+function getInventoryValue(){
+  return data.artikel
+    .reduce(
+      (sum,a) =>
+        sum +
+        Math.max(0,number(a.menge)) *
+        number(a.preis),
+      0
+    );
+}
+
+function getAverageMargin(){
+
+  const revenue = getRevenue();
+
+  if(!revenue) return 0;
+
+  return getProfit() / revenue * 100;
+}
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  if(currentTab === "search"){
+    renderSearch();
+    return;
+  }
+
+  if(currentTab === "sales"){
+    renderSales();
+    return;
+  }
+
+  if(currentTab === "purchases"){
+    renderPurchases();
+    return;
+  }
+
+  renderOverview();
+}
+
+/* =========================================================
+   OVERVIEW
+========================================================= */
+
+function renderOverview(){
+
+  const revenue = getRevenue();
+  const costs = getCosts();
+  const expenses = getExpenses();
+  const profit = getProfit();
+
+  document.getElementById("content").innerHTML = `
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="statLabel">Nettogewinn</div>
+        <div class="statValue ${profit >= 0 ? "green":"red"}">
+          ${formatEuro(profit)}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Gesamtumsatz</div>
+        <div class="statValue">
+          ${formatEuro(revenue)}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Einkaufskosten Verkäufe</div>
+        <div class="statValue">
+          ${formatEuro(costs)}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Versand + Gebühren</div>
+        <div class="statValue">
+          ${formatEuro(expenses)}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Verkaufte Stück</div>
+        <div class="statValue">
+          ${getSoldQty()}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Ø Gewinn/Stück</div>
+        <div class="statValue ${profit >= 0 ? "green":"red"}">
+          ${formatEuro(getSoldQty() ? profit/getSoldQty() : 0)}
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Gewinnmarge</div>
+        <div class="statValue ${getAverageMargin() >= 0 ? "green":"red"}">
+          ${getAverageMargin().toFixed(1)}%
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statLabel">Lagerwert EK</div>
+        <div class="statValue">
+          ${formatEuro(getInventoryValue())}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <div class="sectionTitle">Verkaufsplattformen</div>
+      </div>
+      <div class="card">
+        ${renderPlatforms()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <div class="sectionTitle">Einkaufsorte</div>
+      </div>
+      <div class="card">
+        ${renderSources()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <div class="sectionTitle">Top Artikelgruppen nach Gewinn</div>
+      </div>
+      <div class="card">
+        ${renderArticleGroups()}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHeader">
+        <div class="sectionTitle">Aktueller Lagerbestand</div>
+        <div class="sectionInfo">
+          ${getInventoryQty()} Stück
+        </div>
+      </div>
+      <div class="card">
+        ${renderInventory()}
+      </div>
+    </div>
+  `;
+}
+
 /* =========================================================
    PLATTFORMEN
 ========================================================= */
-function renderPlatforms(map){
-    const el = document.getElementById("platformsList");
-    const rows = Object.keys(map)
-        .map(name => ({
-            name:name,
-            ...map[name]
-        }))
-        .sort((a,b) => b.profit - a.profit);
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Keine Verkaufsdaten vorhanden.
-             </div>`;
-        return;
+
+function renderPlatforms(){
+
+  const map = {};
+
+  getValidSales().forEach(s => {
+
+    const p = normalizePlatform(s.platform);
+
+    if(!map[p]){
+      map[p] = {
+        revenue:0,
+        profit:0,
+        qty:0
+      };
     }
-    let html = "";
-    rows.forEach(row => {
-        html += `
-        <div class="list-item">
-            <div class="item-info">
-                <h4>${escapeHtml(row.name)}</h4>
-                <p>${row.qty} verkaufte Stück · ${euro(row.cost)} EK</p>
-            </div>
-            <div class="item-stats">
-                <div class="item-main-val ${row.profit >= 0 ? "green":"red"}">
-                    ${row.profit >= 0 ? "+":""}${euro(row.profit)}
-                </div>
-                <div class="item-sub-val">
-                    Umsatz: ${euro(row.revenue)}
-                </div>
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
+
+    map[p].revenue += saleRevenue(s);
+    map[p].profit += saleProfit(s);
+    map[p].qty += Math.max(1,number(s.qty));
+  });
+
+  const arr = Object.entries(map)
+    .sort((a,b) => b[1].revenue - a[1].revenue);
+
+  if(!arr.length){
+    return `<div class="empty">Noch keine Verkäufe vorhanden.</div>`;
+  }
+
+  return arr.map(([name,v]) => `
+
+    <div class="row">
+      <div class="rowTop">
+        <div>
+          <div class="rowTitle">${escapeHTML(name)}</div>
+          <div class="rowSub">${v.qty} Stück</div>
+        </div>
+
+        <div class="rowValue">
+          ${formatEuro(v.revenue)}
+          <br>
+          <span class="${v.profit >= 0 ? "green":"red"}">
+            ${formatEuro(v.profit)}
+          </span>
+        </div>
+      </div>
+    </div>
+
+  `).join("");
 }
+
 /* =========================================================
-   MONATLICH
+   EINKAUFSORTE
 ========================================================= */
-function renderMonthly(map){
-    const el = document.getElementById("monthlyList");
-    const rows = Object.keys(map)
-        .sort()
-        .reverse();
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Keine Monatsdaten vorhanden.
-             </div>`;
-        return;
+
+function renderSources(){
+
+  const map = {};
+
+  data.artikel.forEach(a => {
+
+    const source = normalizeSource(a.ort);
+
+    if(!map[source]){
+      map[source] = {
+        qty:0,
+        value:0,
+        items:0
+      };
     }
-    const months = [
-        "Januar",
-        "Februar",
-        "März",
-        "April",
-        "Mai",
-        "Juni",
-        "Juli",
-        "August",
-        "September",
-        "Oktober",
-        "November",
-        "Dezember"
-    ];
-    let html = "";
-    rows.forEach(key => {
-        const [year,month] = key.split("-");
-        const m = map[key];
-        const monthName =
-            months[parseInt(month,10)-1] || month;
-        html += `
-        <div class="list-item">
-            <div class="item-info">
-                <h4>${monthName} ${year}</h4>
-                <p>${m.qty} verkaufte Stück · EK ${euro(m.cost)}</p>
-            </div>
-            <div class="item-stats">
-                <div class="item-main-val ${m.profit >= 0 ? "green":"red"}">
-                    ${m.profit >= 0 ? "+":""}${euro(m.profit)}
-                </div>
-                <div class="item-sub-val">
-                    Umsatz: ${euro(m.revenue)}
-                </div>
-                <div class="item-sub-val">
-                    Kosten: ${euro(m.cost + m.expenses)}
-                </div>
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
+
+    map[source].qty += Math.max(0,number(a.menge));
+    map[source].value +=
+      Math.max(0,number(a.menge)) * number(a.preis);
+
+    map[source].items++;
+  });
+
+  const arr = Object.entries(map)
+    .sort((a,b) => b[1].value - a[1].value);
+
+  if(!arr.length){
+    return `<div class="empty">Keine Einkaufsorte vorhanden.</div>`;
+  }
+
+  return arr.map(([source,v]) => `
+
+    <div class="row">
+      <div class="rowTop">
+
+        <div>
+          <div class="rowTitle">
+            ${escapeHTML(source)}
+          </div>
+
+          <div class="rowSub">
+            ${v.items} Positionen · ${v.qty} Stück
+          </div>
+        </div>
+
+        <div class="rowValue">
+          ${formatEuro(v.value)}
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button class="smallBtn"
+          onclick='showPurchaseSource(${JSON.stringify(source)})'>
+          Einkäufe anzeigen
+        </button>
+      </div>
+
+    </div>
+
+  `).join("");
 }
+
 /* =========================================================
-   AKTUELLES LAGER
+   ARTIKELGRUPPEN
 ========================================================= */
-function renderInventory(map){
-    const el = document.getElementById("inventoryList");
-    const rows = Object.keys(map)
-        .map(name => ({
-            name:name,
-            ...map[name]
-        }))
-        .sort((a,b) => b.qty - a.qty);
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Kein aktiver Lagerbestand vorhanden.
-             </div>`;
-        return;
+
+function renderArticleGroups(){
+
+  const map = {};
+
+  getValidSales().forEach(s => {
+
+    const name =
+      getArticleName(s.name || s.artikelname);
+
+    if(!map[name]){
+      map[name] = {
+        revenue:0,
+        profit:0,
+        qty:0
+      };
     }
-    let html = "";
-    rows.forEach(row => {
-        let details = "";
-        row.items
-            .sort((a,b) => (b.qty || 0) - (a.qty || 0))
-            .forEach(item => {
-                const age =
-                    item.days !== null
-                        ? ` · ${item.days} Tage`
-                        : "";
-                details += `
-                <div style="
-                    font-size:11px;
-                    color:var(--muted);
-                    margin-top:4px;
-                ">
-                    • ${escapeHtml(item.name)}
-                    ${item.size ? ` · Größe ${escapeHtml(item.size)}` : ""}
-                    · ${item.qty} Stk.
-                    · EK ${euro(item.price)}
-                    ${age}
-                </div>`;
-            });
-        html += `
-        <div class="list-item"
-             style="display:block;">
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                gap:10px;
-                align-items:center;
-            ">
-                <div class="item-info">
-                    <h4>${escapeHtml(row.name)}</h4>
-                    <p>${row.items.length} Lagerpositionen</p>
-                </div>
-                <div class="item-stats">
-                    <div class="item-main-val orange">
-                        ${row.qty} Stk.
-                    </div>
-                    <div class="item-sub-val">
-                        EK ${euro(row.value)}
-                    </div>
-                </div>
-            </div>
-            <div style="
-                border-top:1px solid var(--border);
-                margin-top:7px;
-                padding-top:5px;
-            ">
-                ${details}
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
+
+    map[name].revenue += saleRevenue(s);
+    map[name].profit += saleProfit(s);
+    map[name].qty += Math.max(1,number(s.qty));
+  });
+
+  const arr = Object.entries(map)
+    .sort((a,b) => b[1].profit - a[1].profit)
+    .slice(0,15);
+
+  if(!arr.length){
+    return `<div class="empty">Keine Verkaufsdaten vorhanden.</div>`;
+  }
+
+  return arr.map(([name,v]) => `
+
+    <div class="row">
+
+      <div class="rowTop">
+        <div>
+          <div class="rowTitle">${escapeHTML(name)}</div>
+          <div class="rowSub">${v.qty} verkaufte Stück</div>
+        </div>
+
+        <div class="rowValue ${v.profit >= 0 ? "green":"red"}">
+          ${formatEuro(v.profit)}
+        </div>
+      </div>
+
+      <div class="rowSub">
+        Umsatz ${formatEuro(v.revenue)}
+      </div>
+
+    </div>
+
+  `).join("");
 }
+
 /* =========================================================
-   EINKAUFSQUELLEN
+   LAGER
 ========================================================= */
-function renderSources(map){
-    const el = document.getElementById("sourcesList");
-    const rows = Object.keys(map)
-        .map(name => ({
-            name:name,
-            ...map[name]
-        }))
-        .sort((a,b) => b.spent - a.spent);
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Keine Einkaufsquellen vorhanden.
-             </div>`;
-        return;
-    }
-    let html = "";
-    rows.forEach(row => {
-        html += `
-        <div class="list-item">
-            <div class="item-info">
-                <h4>${escapeHtml(row.name)}</h4>
-                <p>${row.qty} Stück im Lager</p>
+
+function renderInventory(){
+
+  const arr = [...data.artikel]
+    .sort((a,b) =>
+      dateValue(a.datum || a.kaufdatum) -
+      dateValue(b.datum || b.kaufdatum)
+    )
+    .slice(0,30);
+
+  if(!arr.length){
+    return `<div class="empty">Kein Lagerbestand vorhanden.</div>`;
+  }
+
+  return arr.map(a => {
+
+    const qty = number(a.menge);
+    const price = number(a.preis);
+    const total = qty * price;
+
+    return `
+
+      <div class="row">
+
+        <div class="rowTop">
+
+          <div>
+            <div class="rowTitle">
+              ${escapeHTML(a.name || "Unbekannter Artikel")}
             </div>
-            <div class="item-stats">
-                <div class="item-main-val orange">
-                    ${euro(row.spent)}
-                </div>
-                <div class="item-sub-val">
-                    Einkaufskosten
-                </div>
+
+            <div class="rowSub">
+              ${escapeHTML(a.artnr || "—")}
+              · Größe ${escapeHTML(a.groesse || "—")}
+              · ${escapeHTML(a.zustand || "—")}
+              <br>
+              ${escapeHTML(normalizeSource(a.ort))}
+              · ${formatDate(a.datum || a.kaufdatum)}
             </div>
-        </div>`;
-    });
-    el.innerHTML = html;
+          </div>
+
+          <div class="rowValue">
+            ${qty} × ${formatEuro(price)}
+            <br>
+            ${formatEuro(total)}
+          </div>
+
+        </div>
+
+        <div class="actions">
+
+          <button class="smallBtn"
+            onclick='showArticle(${JSON.stringify(a.id || a.artnr || "")})'>
+            Details
+          </button>
+
+          <button class="smallBtn"
+            onclick='findSalesForArticle(${JSON.stringify(a.artnr || "")})'>
+            Verkäufe
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
 }
+
 /* =========================================================
-   MARKEN
+   VERKÄUFE
 ========================================================= */
-function renderBrands(map){
-    const el = document.getElementById("brandsList");
-    const rows = Object.keys(map)
-        .map(name => ({
-            name:name,
-            ...map[name]
-        }))
-        .sort((a,b) => b.profit - a.profit);
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Keine Verkaufsdaten vorhanden.
-             </div>`;
-        return;
-    }
-    let html = "";
-    rows.forEach(row => {
-        html += `
-        <div class="list-item">
-            <div class="item-info">
-                <h4>${escapeHtml(row.name)}</h4>
-                <p>
-                    ${row.qty} Stück ·
-                    EK ${euro(row.cost)}
-                </p>
-            </div>
-            <div class="item-stats">
-                <div class="item-main-val ${row.profit >= 0 ? "green":"red"}">
-                    ${row.profit >= 0 ? "+":""}${euro(row.profit)}
-                </div>
-                <div class="item-sub-val">
-                    Umsatz ${euro(row.revenue)}
-                </div>
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
-}
-/* =========================================================
-   FEHLENDE RECHNUNGEN
-========================================================= */
-function renderMissingInvoices(){
-    const el = document.getElementById("missingInvoicesList");
-    const missing = [];
-    inventory.forEach((item,index) => {
-        /*
-         * Die Lagerartikel selbst haben kein
-         * Rechnungsnummer-Feld.
-         *
-         * Deshalb wird hier nur geprüft, ob für
-         * verkaufte Artikel eine Rechnungsnummer
-         * existiert.
-         */
-        const relatedSales = salesLog.filter(s =>
-            s.isStorno !== true &&
-            (
-                String(s.artnr || "").trim() === String(item.artnr || "").trim()
-                ||
-                String(s.name || "").trim().toLowerCase()
-                === String(item.name || "").trim().toLowerCase()
-            )
-        );
-        relatedSales.forEach(sale => {
-            if(!sale.invoiceNr){
-                missing.push({
-                    name:sale.name,
-                    artnr:sale.artnr
-                });
-            }
-        });
-    });
-    if(missing.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                ✓ Für die vorhandenen Verkaufsdaten wurden keine
-                fehlenden Rechnungsnummern gefunden.
-             </div>`;
-        return;
-    }
-    let html = "";
-    missing.slice(0,20).forEach(item => {
-        html += `
-        <div class="list-item">
-            <div class="item-info">
-                <h4>${escapeHtml(item.name)}</h4>
-                <p>${escapeHtml(item.artnr)}</p>
-            </div>
-            <div class="item-stats">
-                <div class="item-main-val red">
-                    FEHLT
-                </div>
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
-}
-/* =========================================================
-   LADENHÜTER / STANDZEITEN
-========================================================= */
-function renderSlowMovers(){
-    const el = document.getElementById("slowMoversList");
-    const rows = [];
-    inventory.forEach(item => {
-        const qty = parseNumber(item.menge);
-        if(qty <= 0) return;
-        const days = getDaysSince(item.datum);
-        if(days === null) return;
-        if(days > 60){
-            const price = parseNumber(item.preis);
-            rows.push({
-                name:item.name || "Artikel",
-                artnr:item.artnr || "",
-                qty:qty,
-                days:days,
-                value:price * qty,
-                date:item.datum
-            });
+
+function renderSales(){
+
+  const sales = [...data.sales]
+    .sort((a,b) =>
+      dateValue(b.date) -
+      dateValue(a.date)
+    );
+
+  document.getElementById("content").innerHTML = `
+
+    <div class="section">
+      <div class="sectionHeader">
+        <div class="sectionTitle">Verkäufe</div>
+        <div class="sectionInfo">
+          ${sales.length} Datensätze
+        </div>
+      </div>
+
+      <div class="card">
+
+        ${
+          sales.length
+          ? sales.map(renderSaleRow).join("")
+          : `<div class="empty">Keine Verkäufe vorhanden.</div>`
         }
-    });
-    rows.sort((a,b) => b.days - a.days);
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Keine aktiven Artikel älter als 60 Tage.
-             </div>`;
-        return;
-    }
-    let html = "";
-    rows.slice(0,20).forEach(item => {
-        html += `
-        <div class="list-item">
-            <div class="item-info">
-                <h4>${escapeHtml(item.name)}</h4>
-                <p>
-                    ${item.qty} Stk. ·
-                    gekauft ${formatDate(item.date)}
-                </p>
-            </div>
-            <div class="item-stats">
-                <div class="item-main-val red">
-                    ${item.days} Tage
-                </div>
-                <div class="item-sub-val">
-                    ${euro(item.value)}
-                </div>
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
+
+      </div>
+    </div>
+  `;
 }
-/* =========================================================
-   VERLAUF
-========================================================= */
-function renderTransactions(filter = ""){
-    const el = document.getElementById("txList");
-    const query =
-        String(filter || "").toLowerCase().trim();
-    const rows = salesLog
-        .filter(s => s.isStorno !== true)
-        .filter(s => {
-            if(!query) return true;
-            const values = [
-                s.name,
-                s.artnr,
-                s.invoiceNr,
-                s.platform,
-                s.date,
-                s.buyDate,
-                s.sourcingLoc
-            ];
-            return values
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase()
-                .includes(query);
-        })
-        .sort((a,b) =>
-            new Date(b.date || 0) -
-            new Date(a.date || 0)
-        );
-    if(rows.length === 0){
-        el.innerHTML =
-            `<div class="empty-state">
-                Keine passenden Verkäufe gefunden.
-             </div>`;
-        return;
-    }
-    let html = "";
-    rows.forEach((sale,index) => {
-        const qty = parseNumber(sale.qty);
-        const revenue = parseNumber(sale.total);
-        const buyPrice = parseNumber(sale.buyPrice);
-        const shipping = parseNumber(sale.shipping);
-        const fees = parseNumber(sale.fees);
-        const cost = buyPrice * qty;
-        const profit =
-            revenue
-            - shipping
-            - fees
-            - cost;
-        const profitClass =
-            profit >= 0 ? "green":"red";
-        let details = "";
-        const detailRows = [
-            ["Rechnung",sale.invoiceNr],
-            ["Artikelnummer",sale.artnr],
-            ["Verkaufsdatum",formatDate(sale.date)],
-            ["Kaufdatum",formatDate(sale.buyDate)],
-            ["Plattform",sale.platform],
-            ["Menge",qty],
-            ["Verkauf",euro(revenue)],
-            ["EK/Stück",euro(buyPrice)],
-            ["EK gesamt",euro(cost)],
-            ["Versand",euro(shipping)],
-            ["Gebühren",euro(fees)],
-            ["Gewinn",euro(profit)],
-            ["Kauf-Ort",sale.sourcingLoc]
-        ];
-        detailRows.forEach(row => {
-            if(
-                row[1] !== undefined &&
-                row[1] !== null &&
-                row[1] !== ""
-            ){
-                details += `
-                <div class="detail-item">
-                    ${escapeHtml(row[0])}:
-                    <span>${escapeHtml(row[1])}</span>
-                </div>`;
+
+function renderSaleRow(s){
+
+  const profit = saleProfit(s);
+  const address = addressParts(s);
+
+  return `
+
+    <div class="row">
+
+      <div class="rowTop">
+
+        <div>
+
+          <div class="rowTitle">
+            ${escapeHTML(s.name || s.artikelname || "Unbekannter Artikel")}
+          </div>
+
+          <div class="rowSub">
+
+            <span class="badge">
+              ${escapeHTML(normalizePlatform(s.platform))}
+            </span>
+
+            ${
+              isStorno(s)
+              ? `<span class="badge redBadge">STORNO</span>`
+              : ""
             }
-        });
-        html += `
-        <div class="tx-card"
-             onclick="this.classList.toggle('expanded')">
-            <div class="tx-header-row">
-                <div class="tx-main">
-                    <h4>
-                        ${escapeHtml(sale.name || "Artikel")}
-                    </h4>
-                    <div class="tx-sub">
-                        ${sale.artnr
-                            ? `Art.-Nr. ${escapeHtml(sale.artnr)} · `
-                            : ""
-                        }
-                        ${sale.platform
-                            ? escapeHtml(sale.platform) + " · "
-                            : ""
-                        }
-                        ${formatDate(sale.date)}
-                        · ${qty}x
-                    </div>
-                </div>
-                <div class="tx-right">
-                    <div class="tx-price">
-                        ${euro(revenue)}
-                    </div>
-                    <div class="tx-profit ${profitClass}">
-                        ${profit >= 0 ? "+":""}${euro(profit)}
-                    </div>
-                </div>
-            </div>
-            <div class="tx-details">
-                ${details}
-            </div>
-        </div>`;
-    });
-    el.innerHTML = html;
+
+            <br>
+
+            ${escapeHTML(s.invoiceNr || "Keine Rechnungsnummer")}
+            · ${formatDate(s.date)}
+
+          </div>
+
+        </div>
+
+        <div class="rowValue">
+
+          ${formatEuro(s.total)}
+
+          <br>
+
+          <span class="${profit >= 0 ? "green":"red"}">
+            ${formatEuro(profit)}
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="rowSub">
+
+        Käufer:
+        <b>${escapeHTML(buyerName(s) || "—")}</b>
+
+        ${
+          buyerCity(s)
+          ? " · " + escapeHTML(buyerCity(s))
+          : ""
+        }
+
+        ${
+          buyerZip(s)
+          ? " · " + escapeHTML(buyerZip(s))
+          : ""
+        }
+
+      </div>
+
+      <div class="rowSub">
+
+        Artikel:
+        ${escapeHTML(s.artnr || "—")}
+
+        · Größe:
+        ${escapeHTML(
+          s.groesse ||
+          s.size ||
+          "—"
+        )}
+
+      </div>
+
+      <div class="actions">
+
+        <button class="smallBtn"
+          onclick='showSale(${JSON.stringify(s.id)})'>
+          Details
+        </button>
+
+        <button class="smallBtn"
+          onclick='copySale(${JSON.stringify(s.id)})'>
+          Kopieren
+        </button>
+
+        ${
+          address.city
+          ? `
+            <button class="smallBtn"
+              onclick='searchText(${JSON.stringify(address.city)})'>
+              Stadt suchen
+            </button>
+          `
+          : ""
+        }
+
+      </div>
+
+    </div>
+  `;
 }
+
+/* =========================================================
+   EINKÄUFE
+========================================================= */
+
+function renderPurchases(){
+
+  const articles = [...data.artikel]
+    .sort((a,b) =>
+      dateValue(a.datum || a.kaufdatum) -
+      dateValue(b.datum || b.kaufdatum)
+    );
+
+  document.getElementById("content").innerHTML = `
+
+    <div class="section">
+
+      <div class="sectionHeader">
+        <div class="sectionTitle">Einkäufe</div>
+
+        <div class="sectionInfo">
+          ${articles.length} Positionen
+        </div>
+      </div>
+
+      <div class="card">
+
+        ${
+          articles.length
+          ? articles.map(renderPurchaseRow).join("")
+          : `<div class="empty">Keine Einkaufsdaten vorhanden.</div>`
+        }
+
+      </div>
+
+    </div>
+  `;
+}
+
+function renderPurchaseRow(a){
+
+  const qty = Math.max(0,number(a.menge));
+  const unit = number(a.preis);
+  const total = qty * unit;
+
+  const matchingSales = data.sales.filter(s =>
+    clean(s.artnr) === clean(a.artnr)
+  );
+
+  return `
+
+    <div class="row">
+
+      <div class="rowTop">
+
+        <div>
+
+          <div class="rowTitle">
+            ${escapeHTML(a.name || "Unbekannter Artikel")}
+          </div>
+
+          <div class="rowSub">
+
+            Art.-Nr.:
+            ${escapeHTML(a.artnr || "—")}
+
+            <br>
+
+            Einkaufsort:
+            <b>${escapeHTML(normalizeSource(a.ort))}</b>
+
+            <br>
+
+            Kaufdatum:
+            ${formatDate(a.datum || a.kaufdatum)}
+
+            · Größe:
+            ${escapeHTML(a.groesse || "—")}
+
+          </div>
+
+        </div>
+
+        <div class="rowValue">
+
+          ${qty} × ${formatEuro(unit)}
+
+          <br>
+
+          <b>${formatEuro(total)}</b>
+
+        </div>
+
+      </div>
+
+      ${
+        matchingSales.length
+        ? `
+          <div class="rowSub">
+            ${matchingSales.length} zugehörige Verkäufe gefunden.
+          </div>
+        `
+        : ""
+      }
+
+      <div class="actions">
+
+        <button class="smallBtn"
+          onclick='showArticle(${JSON.stringify(a.id || a.artnr || "")})'>
+          Einkaufsdetails
+        </button>
+
+        <button class="smallBtn"
+          onclick='findSalesForArticle(${JSON.stringify(a.artnr || "")})'>
+          Verkäufe prüfen
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
 /* =========================================================
    SUCHE
 ========================================================= */
-document
-.getElementById("searchInput")
-.addEventListener("input",function(){
-    renderTransactions(this.value);
+
+function renderSearch(){
+
+  const s = searchResults.sales || [];
+  const a = searchResults.articles || [];
+
+  document.getElementById("content").innerHTML = `
+
+    <div class="searchResultCount">
+      ${s.length} Verkäufe · ${a.length} Artikel gefunden
+    </div>
+
+    ${
+      s.length
+      ? `
+        <div class="section">
+          <div class="sectionHeader">
+            <div class="sectionTitle">Verkäufe / Rechnungen</div>
+          </div>
+
+          <div class="card">
+            ${s.map(renderSaleRow).join("")}
+          </div>
+        </div>
+      `
+      : ""
+    }
+
+    ${
+      a.length
+      ? `
+        <div class="section">
+          <div class="sectionHeader">
+            <div class="sectionTitle">Lager / Einkäufe</div>
+          </div>
+
+          <div class="card">
+            ${a.map(renderPurchaseRow).join("")}
+          </div>
+        </div>
+      `
+      : ""
+    }
+
+    ${
+      !s.length && !a.length
+      ? `<div class="card"><div class="empty">
+          Keine passenden Daten gefunden.
+        </div></div>`
+      : ""
+    }
+  `;
+}
+
+/* =========================================================
+   EINKAUFSORT DETAIL
+========================================================= */
+
+function showPurchaseSource(source){
+
+  const articles = data.artikel.filter(a =>
+    normalizeSource(a.ort) === source
+  );
+
+  const total = articles.reduce(
+    (sum,a) =>
+      sum +
+      number(a.menge) *
+      number(a.preis),
+    0
+  );
+
+  document.getElementById("detailContent").innerHTML = `
+
+    <div class="modalTitle">
+      ${escapeHTML(source)}
+    </div>
+
+    <div class="infoBox">
+      ${articles.length} Positionen<br>
+      Warenwert EK:
+      <b>${formatEuro(total)}</b>
+    </div>
+
+    ${
+      articles.length
+      ? articles.map(a => `
+
+        <div class="row">
+
+          <div class="rowTop">
+
+            <div>
+              <div class="rowTitle">
+                ${escapeHTML(a.name || "—")}
+              </div>
+
+              <div class="rowSub">
+                Art.-Nr. ${escapeHTML(a.artnr || "—")}
+                · Größe ${escapeHTML(a.groesse || "—")}
+                <br>
+                Kaufdatum:
+                ${formatDate(a.datum || a.kaufdatum)}
+              </div>
+            </div>
+
+            <div class="rowValue">
+              ${formatEuro(number(a.preis))}
+              <br>
+              ${number(a.menge)} Stück
+            </div>
+
+          </div>
+
+          <div class="actions">
+
+            <button class="smallBtn"
+              onclick='findSalesForArticle(${JSON.stringify(a.artnr || "")})'>
+              Zugehörige Verkäufe
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join("")
+      : `<div class="empty">Keine Artikel gefunden.</div>`
+    }
+
+  `;
+
+  document.getElementById("detailModal")
+    .classList.add("show");
+}
+
+/* =========================================================
+   ARTIKEL DETAIL
+========================================================= */
+
+function findArticle(id){
+
+  return data.artikel.find(a =>
+    String(a.id) === String(id) ||
+    String(a.artnr) === String(id)
+  );
+}
+
+function showArticle(id){
+
+  const a = findArticle(id);
+
+  if(!a) return;
+
+  const qty = number(a.menge);
+  const price = number(a.preis);
+  const total = qty * price;
+
+  const sales = data.sales.filter(s =>
+    clean(s.artnr) === clean(a.artnr)
+  );
+
+  const revenue = sales
+    .filter(s => !isStorno(s))
+    .reduce((sum,s) => sum + saleRevenue(s),0);
+
+  document.getElementById("detailContent").innerHTML = `
+
+    <div class="modalTitle">
+      ${escapeHTML(a.name || "Artikel")}
+    </div>
+
+    <div class="infoBox">
+
+      Artikelnummer:
+      <b>${escapeHTML(a.artnr || "—")}</b><br>
+
+      Größe:
+      <b>${escapeHTML(a.groesse || "—")}</b><br>
+
+      Zustand:
+      <b>${escapeHTML(a.zustand || "—")}</b><br>
+
+      Einkaufsort:
+      <b>${escapeHTML(normalizeSource(a.ort))}</b><br>
+
+      Kaufdatum:
+      <b>${formatDate(a.datum || a.kaufdatum)}</b><br>
+
+      Menge:
+      <b>${qty}</b><br>
+
+      Einkaufspreis/Stück:
+      <b>${formatEuro(price)}</b><br>
+
+      Gesamt-Einkauf:
+      <b>${formatEuro(total)}</b>
+
+    </div>
+
+    ${
+      a.notiz
+      ? `
+        <div class="infoBox">
+          <b>Notiz</b><br>
+          ${escapeHTML(a.notiz)}
+        </div>
+      `
+      : ""
+    }
+
+    <div class="sectionTitle">
+      Zugehörige Verkäufe
+    </div>
+
+    <div class="card" style="margin-top:8px">
+
+      ${
+        sales.length
+        ? sales.map(renderSaleRow).join("")
+        : `<div class="empty">
+             Noch kein Verkauf zu diesem Artikel gefunden.
+           </div>`
+      }
+
+    </div>
+
+    <div class="modalActions">
+      <button class="secondary"
+        onclick='copyPurchaseData(${JSON.stringify(a.id || a.artnr || "")})'>
+        Einkaufsdaten kopieren
+      </button>
+    </div>
+  `;
+
+  document.getElementById("detailModal")
+    .classList.add("show");
+}
+
+/* =========================================================
+   VERKAUF DETAIL
+========================================================= */
+
+function showSale(id){
+
+  const s = data.sales.find(x =>
+    String(x.id) === String(id)
+  );
+
+  if(!s) return;
+
+  const address = addressParts(s);
+
+  document.getElementById("detailContent").innerHTML = `
+
+    <div class="modalTitle">
+      Rechnung ${escapeHTML(s.invoiceNr || "—")}
+    </div>
+
+    <div class="infoBox">
+
+      <b>Verkauf</b><br>
+
+      Artikel:
+      ${escapeHTML(s.name || "—")}<br>
+
+      Artikelnummer:
+      ${escapeHTML(s.artnr || "—")}<br>
+
+      Größe:
+      ${escapeHTML(s.groesse || s.size || "—")}<br>
+
+      Plattform:
+      ${escapeHTML(normalizePlatform(s.platform))}<br>
+
+      Verkaufsdatum:
+      ${formatDate(s.date)}<br>
+
+      Menge:
+      ${number(s.qty)}<br>
+
+      Verkaufspreis:
+      ${formatEuro(s.total)}<br>
+
+      Einkaufskosten:
+      ${formatEuro(saleCost(s))}<br>
+
+      Versand:
+      ${formatEuro(s.shipping)}<br>
+
+      Gebühren:
+      ${formatEuro(s.fees)}<br>
+
+      Gewinn:
+      <span class="${saleProfit(s) >= 0 ? "green":"red"}">
+        ${formatEuro(saleProfit(s))}
+      </span>
+
+    </div>
+
+    <div class="infoBox">
+
+      <b>Käufer</b><br>
+
+      Name:
+      ${escapeHTML(buyerName(s) || "—")}<br>
+
+      Straße:
+      ${escapeHTML(address.street || "—")}<br>
+
+      PLZ:
+      ${escapeHTML(buyerZip(s) || "—")}<br>
+
+      Stadt:
+      ${escapeHTML(buyerCity(s) || "—")}<br>
+
+      Land:
+      ${escapeHTML(address.country || "—")}
+
+    </div>
+
+    ${
+      s.invoiceImg
+      ? `
+        <div class="actions">
+          <button class="smallBtn"
+            onclick='openInvoiceImage(${JSON.stringify(s.invoiceImg)})'>
+            Rechnung/Beleg öffnen
+          </button>
+        </div>
+      `
+      : `
+        <div class="infoBox">
+          Für diesen Verkauf ist kein Rechnungsbild hinterlegt.
+        </div>
+      `
+    }
+
+    <div class="modalActions">
+
+      <button class="secondary"
+        onclick='copySale(${JSON.stringify(s.id)})'>
+        Daten kopieren
+      </button>
+
+    </div>
+  `;
+
+  document.getElementById("detailModal")
+    .classList.add("show");
+}
+
+function closeDetail(){
+  document.getElementById("detailModal")
+    .classList.remove("show");
+}
+
+/* =========================================================
+   SUCHFUNKTIONEN
+========================================================= */
+
+function searchText(text){
+
+  const input = document.getElementById("globalSearch");
+
+  input.value = text;
+
+  runSearch();
+}
+
+function findSalesForArticle(artnr){
+
+  if(!artnr){
+    alert("Keine Artikelnummer vorhanden.");
+    return;
+  }
+
+  searchText(artnr);
+}
+
+/* =========================================================
+   KOPIEREN
+========================================================= */
+
+function copySale(id){
+
+  const s = data.sales.find(x =>
+    String(x.id) === String(id)
+  );
+
+  if(!s) return;
+
+  const address = addressParts(s);
+
+  const text = [
+    `Rechnung: ${s.invoiceNr || ""}`,
+    `Käufer: ${buyerName(s)}`,
+    `Straße: ${address.street || ""}`,
+    `PLZ: ${buyerZip(s)}`,
+    `Stadt: ${buyerCity(s)}`,
+    `Artikel: ${s.name || ""}`,
+    `Artikelnummer: ${s.artnr || ""}`,
+    `Größe: ${s.groesse || s.size || ""}`,
+    `Plattform: ${normalizePlatform(s.platform)}`,
+    `Verkaufsdatum: ${formatDate(s.date)}`,
+    `Menge: ${number(s.qty)}`,
+    `Verkaufspreis: ${formatEuro(s.total)}`,
+    `Einkaufskosten: ${formatEuro(saleCost(s))}`,
+    `Versand: ${formatEuro(s.shipping)}`,
+    `Gebühren: ${formatEuro(s.fees)}`,
+    `Gewinn: ${formatEuro(saleProfit(s))}`
+  ].join("\n");
+
+  copyText(text);
+}
+
+function copyPurchaseData(id){
+
+  const a = findArticle(id);
+
+  if(!a) return;
+
+  const qty = number(a.menge);
+  const price = number(a.preis);
+
+  const text = [
+    `Artikel: ${a.name || ""}`,
+    `Artikelnummer: ${a.artnr || ""}`,
+    `Größe: ${a.groesse || ""}`,
+    `Zustand: ${a.zustand || ""}`,
+    `Einkaufsort: ${normalizeSource(a.ort)}`,
+    `Kaufdatum: ${formatDate(a.datum || a.kaufdatum)}`,
+    `Menge: ${qty}`,
+    `Einkaufspreis/Stück: ${formatEuro(price)}`,
+    `Gesamt: ${formatEuro(qty * price)}`,
+    `Notiz: ${a.notiz || ""}`
+  ].join("\n");
+
+  copyText(text);
+}
+
+function copyText(text){
+
+  if(navigator.clipboard){
+
+    navigator.clipboard.writeText(text)
+      .then(() => alert("Daten kopiert."))
+      .catch(() => fallbackCopy(text));
+
+  }else{
+
+    fallbackCopy(text);
+
+  }
+}
+
+function fallbackCopy(text){
+
+  const textarea = document.createElement("textarea");
+
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+
+  document.body.appendChild(textarea);
+
+  textarea.select();
+  document.execCommand("copy");
+
+  textarea.remove();
+
+  alert("Daten kopiert.");
+}
+
+/* =========================================================
+   RECHNUNGSBILD
+========================================================= */
+
+function openInvoiceImage(src){
+
+  if(!src) return;
+
+  const win = window.open();
+
+  if(!win){
+    alert("Das Öffnen des Belegs wurde vom Browser blockiert.");
+    return;
+  }
+
+  win.document.write(`
+    <html>
+      <head>
+        <title>Rechnung</title>
+        <meta name="viewport"
+          content="width=device-width,initial-scale=1">
+        <style>
+          body{
+            margin:0;
+            background:#000;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+          }
+          img{
+            max-width:100%;
+            max-height:100vh;
+            object-fit:contain;
+          }
+        </style>
+      </head>
+      <body>
+        <img src="${escapeAttribute(src)}">
+      </body>
+    </html>
+  `);
+}
+
+/* =========================================================
+   HTML SICHERHEIT
+========================================================= */
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function escapeAttribute(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/"/g,"&quot;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+/* =========================================================
+   MODAL AUSSEN KLICK
+========================================================= */
+
+document.querySelectorAll(".modalBack").forEach(modal => {
+
+  modal.addEventListener("click", e => {
+
+    if(e.target === modal){
+      modal.classList.remove("show");
+    }
+
+  });
+
 });
 </script>
+
 </body>
 </html>
